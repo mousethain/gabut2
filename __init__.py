@@ -19,7 +19,7 @@ logging.basicConfig(level=logging.INFO)
 uptime = DT.datetime.now()
 
 exec(open("cybervpn/var.txt", "r").read())
-bot = TelegramClient("cybervpn", "21368165", "1dc8aa0310e819cf8bcebfc7e2810101").start(bot_token=BOT_TOKEN)
+bot = TelegramClient("mousevpn", "21368875", "1dc8aa0310e819cf8890bfc7e2810101").start(bot_token=BOT_TOKEN)
 
 
 
@@ -33,7 +33,7 @@ bot = TelegramClient("cybervpn", "21368165", "1dc8aa0310e819cf8bcebfc7e2810101")
 
 try:
     # Mencoba membuka database
-    x = sqlite3.connect("cybervpn/database.db")
+    x = sqlite3.connect("mousevpn/database.db")
     c = x.cursor()
 
     # Membuat tabel server jika belum ada
@@ -50,7 +50,7 @@ try:
     count = c.fetchone()[0]
     if count == 0:
         c.execute("INSERT INTO server (button_name, host, password) VALUES (?, ?, ?)",
-                  ('sg🇵🇸', 'cybervpn.my.id', 'GoldenFR2.e'))
+                  ('sg🇵🇸', 'mousevpn.my.id', 'GoldenFR2.e'))
 
     x.commit()
     print("Tabel server berhasil dibuat atau sudah ada.")
@@ -110,7 +110,7 @@ def tambah_saldo(user_id, jumlah_tambahan):
 
 
 async def tambah_data_ewallet(email, dana, gopay, event):
-    conn = sqlite3.connect('cybervpn/database.db')
+    conn = sqlite3.connect('mousevpn/database.db')
     c = conn.cursor()
     try:
         c.execute("INSERT INTO ewallet (email, dana, gopay) VALUES (?, ?, ?)", (email, dana, gopay))
@@ -129,7 +129,7 @@ async def tambah_data_ewallet(email, dana, gopay, event):
 
 
 def get_server_info(button_name):
-    conn = sqlite3.connect('cybervpn/database.db')
+    conn = sqlite3.connect('mousevpn/database.db')
     db = conn.cursor()
     return db.execute("SELECT host, password FROM server WHERE button_name = ?", (button_name,)).fetchone()
 
@@ -138,7 +138,7 @@ def get_server_info(button_name):
 
 
 async def edit_email_ewallet(old, new, event):
-    conn = sqlite3.connect('cybervpn/database.db')
+    conn = sqlite3.connect('mousevpn/database.db')
     c = conn.cursor()
 
     try:
@@ -174,7 +174,7 @@ async def edit_email_ewallet(old, new, event):
 
 
 # Koneksi ke database
-conn = sqlite3.connect('cybervpn/database.db')
+conn = sqlite3.connect('mousevpn/database.db')
 c = conn.cursor()
 
 # Fungsi untuk menampilkan tombol inline berdasarkan jumlah primary key di database
@@ -219,7 +219,7 @@ async def button_callback(event):
 
 
 async def edit_nomor_dana_ewallet(event, email, nomor_dana_baru):
-    conn = sqlite3.connect('cybervpn/database.db')
+    conn = sqlite3.connect('mousevpn/database.db')
     c = conn.cursor()
 
     try:
@@ -243,7 +243,7 @@ async def edit_nomor_dana_ewallet(event, email, nomor_dana_baru):
 
 
 async def edit_nomor_gopay_ewallet(event, email, nomor_gopay_baru):
-    conn = sqlite3.connect('cybervpn/database.db')
+    conn = sqlite3.connect('mousevpn/database.db')
     c = conn.cursor()
 
     try:
@@ -270,7 +270,7 @@ async def edit_nomor_gopay_ewallet(event, email, nomor_gopay_baru):
 
 
 def tampilkan_dana_gopay():
-    conn = sqlite3.connect('cybervpn/database.db')
+    conn = sqlite3.connect('mousevpn/database.db')
     c = conn.cursor()
 
     c.execute("SELECT COALESCE(dana, 'NULL'), COALESCE(gopay, 'NULL') FROM ewallet")
@@ -334,7 +334,7 @@ def get_saldo_and_level_from_db(user_id):
 
 
 def get_saldo_from_db(user_id):
-    conn = sqlite3.connect('cybervpn/database.db')
+    conn = sqlite3.connect('mousevpn/database.db')
     cursor = conn.cursor()
 
     # Ubah query untuk mengambil saldo berdasarkan user_id
@@ -522,7 +522,7 @@ async def process_user_balance_vless(event, user_id):
 
 def check_user_registration(user_id):
     try:
-        x = sqlite3.connect("cybervpn/database.db")
+        x = sqlite3.connect("mousevpn/database.db")
         c = x.cursor()
         c.execute("SELECT * FROM user WHERE user_id=?", (user_id,))
         user_data = c.fetchone()
@@ -542,7 +542,7 @@ def check_user_registration(user_id):
 
 
 def get_user_count():
-    db_connection = sqlite3.connect('cybervpn/database.db')
+    db_connection = sqlite3.connect('mousevpn/database.db')
     cursor = db_connection.cursor()
     query = "SELECT COUNT(*) FROM user"
     
