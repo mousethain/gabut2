@@ -18,7 +18,7 @@ from datetime import datetime, timedelta
 logging.basicConfig(level=logging.INFO)
 uptime = DT.datetime.now()
 
-exec(open("cybervpn/var.txt", "r").read())
+exec(open("mousevpn/var.txt", "r").read())
 bot = TelegramClient("mousevpn", "21368875", "1dc8aa0310e819cf8890bfc7e2810101").start(bot_token=BOT_TOKEN)
 
 
