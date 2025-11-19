@@ -1,4 +1,4 @@
-from cybervpn import *
+from mousevpn import *
 from importlib import import_module
 from mousevpn.modules import ALL_MODULES
 for module_name in ALL_MODULES:
