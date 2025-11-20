@@ -1,8 +1,8 @@
-from cybervpn import *
+from mousevpn import *
 from telethon import events, Button
 import requests
 
-url = "https://raw.githubusercontent.com/messiey/rocky/master/statushariini"
+url = "https://raw.githubusercontent.com/mousethain/tahu/main/statushariini"
 
 response = requests.get(url)
 
@@ -83,8 +83,7 @@ async def start_menu(event):
                     [Button.inline("🎲Add Saldo Member🎲", "addsaldo")],
                     [Button.inline("🖥️Check Vps Info🖥️", "info"),
                      Button.inline("⚙️Other Settings⚙️", "setting")],
-                    [Button.url("🛂Tele Group🛂", "https://t.me/gretongers_jatim"),
-                     Button.url("🕊Order Autocript?🕊", "https://t.me/wongedan_kuwibebas")]
+                    [Button.url("🛂contact🛂", "https://t.me/mousethain")]
                 ]
 
                 admin_msg = f"""
@@ -108,8 +107,7 @@ async def start_menu(event):
 **» Anti DDoS status:** `{get_ddos_status()}`
 **━━━━━━━━━━━━━━━━**
 **» 🎲Version:** `v3.1.1`
-**» 🎲channel:** `@gretongers_jatim`
-**» 🎲Bot by @wongedan_kuwibebas **
+**» 🎲contact:** `@mousethain`
 **» 🎲Your ID ** `{user_id}`
 **» 🎲Harga SSH    IDR.10.000 **
 **» 🎲Harga VMESS  IDR.15.000 **
