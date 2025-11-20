@@ -1,4 +1,4 @@
-from cybervpn import *
+from mousevpn import *
 import subprocess
 import json
 import re
@@ -71,7 +71,7 @@ async def create_noobz(event):
 `GET / HTTP/1.1[crlf]Host: [s_host][crlf]Upgrade: websocket[crlf]Connection: Upgrade[crlf]User-Agent: [ua][crlf][crlf]`
 **━━━━━━━━━━━━━━━━**
 **» Expired Until:** `{later}`
-**» 🛂@wongedan_kuwibebas**
+**» 🛂@mousethain**
 **━━━━━━━━━━━━━━━━**
         """
 
@@ -140,12 +140,11 @@ async def trial_noobz(event):
 `GET / HTTP/1.1[crlf]Host: [s_host][crlf]Upgrade: websocket[crlf]Connection: Upgrade[crlf]User-Agent: [ua][crlf][crlf]`
 **━━━━━━━━━━━━━━━━**
 **» Expired Until:** `{later}`
-**» 🛂@wongedan_kuwibebas**
+**» 🛂@mousethain**
 **━━━━━━━━━━━━━━━━**
 """
             inline = [
-                [Button.url("[ Contact ]", "t.me/wongedan_kuwibebas"),
-                 Button.url("[ Channel ]", "t.me/gretongers_jatim")]
+                [Button.url("[ Contact ]", "t.me/mousethain")]
             ]
             await event.respond(msg, buttons=inline)
 
