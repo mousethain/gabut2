@@ -19,7 +19,7 @@ logging.basicConfig(level=logging.INFO)
 uptime = DT.datetime.now()
 
 exec(open("cybervpn/var.txt", "r").read())
-bot = TelegramClient("cybervpn", "21368165", "1dc8aa0310e819cf8bcebfc7e2810101").start(bot_token=BOT_TOKEN)
+bot = TelegramClient("cybervpn", "21368785", "1dc8aa0310e819cf8bcebfc782810101").start(bot_token=BOT_TOKEN)
 
 
 
