@@ -1,4 +1,4 @@
-from cybervpn import *
+from mousevpn import *
 import subprocess
 import datetime as DT
 import asyncio
@@ -30,12 +30,11 @@ async def registrasi_handler(event):
 **» Balance:** `IDR.0`
 **━━━━━━━━━━━━━━━━**
 **» Registration Date:** `{later}`
-**» 🛂@wongedan_kuwibebas**
+**» 🛂@mousethain**
 **━━━━━━━━━━━━━━━━**
 """
         inline = [
-            [Button.url("[ Contact ]", "t.me/wongedan_kuwibebas"),
-             Button.url("[ Channel ]", "t.me/gretongers_jatim")]
+            [Button.url("[ Contact ]", "t.me/mousethain")]
         ]
         await event.respond(msg, buttons=inline)
 
