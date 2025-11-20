@@ -1,5 +1,5 @@
 import subprocess
-from cybervpn import *
+from mousevpn import *
 
 @bot.on(events.CallbackQuery(data=b'renew-ssh-member'))
 async def renew_ssh_member(event):
