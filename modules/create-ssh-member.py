@@ -101,12 +101,11 @@ async def create_ssh(event):
 `GET wss:/// HTTP/1.1[crlf]Host: {DOMAIN}[crlf]Upgrade: websocket[crlf]Connection: Keep-Alive[crlf][crlf]`
 **━━━━━━━━━━━━━━━━**
 **» Expired Until:** `{later}`
-**» 🛂@wongedan_kuwibebas**
+**» 🛂@mousethain**
 **━━━━━━━━━━━━━━━━**
 """
             inline = [
-                [Button.url("[ Contact ]", "t.me/wongedan_kuwibebas"),
-                 Button.url("[ Channel ]", "t.me/gretongers_jatim")]
+                [Button.url("[ Contact ]", "t.me/mousethain")]
             ]
             await event.respond(msg, buttons=inline)
     
