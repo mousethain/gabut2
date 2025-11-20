@@ -21,12 +21,11 @@ async def delete_handler(event):
 **» status account:** `deleted✅`
 **━━━━━━━━━━━━━━━━**
 **» Date of deletion:** `{later}`
-**» 🛂@wongedan_kuwibebas**
+**» 🛂@mousethain**
 **━━━━━━━━━━━━━━━━**
 """
         inline = [
-            [Button.url("[ Contact ]", "t.me/wongedan_kuwibebas"),
-             Button.url("[ Channel ]", "t.me/gretongers_jatim")]
+            [Button.url("[ Contact ]", "t.me/mousethain")]
         ]
         await event.respond(msg, buttons=inline)
 
