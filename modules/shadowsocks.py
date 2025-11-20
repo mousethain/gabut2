@@ -1,4 +1,4 @@
-from cybervpn import *
+from mousevpn import *
 import requests
 import time
 import subprocess
@@ -78,7 +78,7 @@ async def create_shadowsocks(event):
 **» Link QR  :** `Link Via Qris  :https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=${x[0]}`
 **◇━━━━━━━━━━━━━━━━━◇**
 **» Expired Until:** `{later}`
-*» 🛂@wongedan_kuwibebas**
+*» 🛂@mousethain**
 *◇━━━━━━━━━━━━━━━━━◇**
 
         """
@@ -296,7 +296,7 @@ async def trial_shadowsocks(event):
 **» Link QR  :** `Link Via Qris  :https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=${x[0]}`
 **◇━━━━━━━━━━━━━━━━━◇**
 **» Expired Until:** `{later}`
-*» 🛂@wongedan_kuwibebas**
+*» 🛂@mousethain**
 *◇━━━━━━━━━━━━━━━━━◇**
 
         """
