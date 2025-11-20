@@ -1,4 +1,4 @@
-from cybervpn import *
+from mousevpn import *
 import datetime as DT
 import requests
 
@@ -37,12 +37,11 @@ async def saldo_handler(event):
 **» status:** `success✅`
 **━━━━━━━━━━━━━━━━**
 **» Change date:** `{later}`
-**» 🛂@wongedan_kuwibebas**
+**» 🛂@mousethain**
 **━━━━━━━━━━━━━━━━**
 """
             inline = [
-                [Button.url("[ Contact ]", "t.me/wongedan_kuwibebas"),
-                 Button.url("[ Channel ]", "t.me/gretongers_jatim")]
+                [Button.url("[ Contact ]", "t.me/mousethain")]
             ]
             await event.respond(msg, buttons=inline)
         else:
@@ -89,12 +88,11 @@ async def dana_handler(event):
 **» status:** `success✅`
 **━━━━━━━━━━━━━━━━**
 **» Change date:** `{later}`
-**» 🛂@wongedan_kuwibebas**
+**» 🛂@mousethain**
 **━━━━━━━━━━━━━━━━**
 """
             inline = [
-                [Button.url("[ Contact ]", "t.me/wongedan_kuwibebas"),
-                 Button.url("[ Channel ]", "t.me/gretongers_jatim")]
+                [Button.url("[ Contact ]", "t.me/mousethain")]
             ]
             await event.respond(msg, buttons=inline)
         else:
@@ -140,12 +138,11 @@ async def dana_handler(event):
 **» status:** `success✅`
 **━━━━━━━━━━━━━━━━**
 **» Change date:** `{later}`
-**» 🛂@wongedan_kuwibebas**
+**» 🛂@mousethain**
 **━━━━━━━━━━━━━━━━**
 """
             inline = [
-                [Button.url("[ Contact ]", "t.me/wongedan_kuwibebas"),
-                 Button.url("[ Channel ]", "t.me/gretongers_jatim")]
+                [Button.url("[ Contact ]", "t.me/mousethain")]
             ]
             await event.respond(msg, buttons=inline)
         else:
@@ -203,12 +200,11 @@ async def wallet_handler(event):
 **» status:** `success✅`
 **━━━━━━━━━━━━━━━━**
 **» Change date:** `{later}`
-**» 🛂@wongedan_kuwibebas**
+**» 🛂@mousethain**
 **━━━━━━━━━━━━━━━━**
 """
             inline = [
-                [Button.url("[ Contact ]", "t.me/wongedan_kuwibebas"),
-                 Button.url("[ Channel ]", "t.me/gretongers_jatim")]
+                [Button.url("[ Contact ]", "t.me/mousethain")]
             ]
             await event.respond(msg, buttons=inline)
         else:
