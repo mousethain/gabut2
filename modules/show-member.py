@@ -1,4 +1,4 @@
-from cybervpn import *
+from mousevpn import *
 from telethon import events, Button
 
 @bot.on(events.CallbackQuery(data=b'show-user'))
