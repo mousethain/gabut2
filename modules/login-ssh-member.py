@@ -1,4 +1,4 @@
-from cybervpn import *
+from mousevpn import *
 import subprocess
 # CEK VMESS
 @bot.on(events.CallbackQuery(data=b'login-ssh-member'))
