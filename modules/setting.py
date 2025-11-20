@@ -1,4 +1,4 @@
-from cybervpn import *
+from mousevpn import *
 import requests
 import subprocess
 import time
