@@ -1,4 +1,4 @@
-from cybervpn import *
+from mousevpn import *
 import datetime as DT
 
 @bot.on(events.CallbackQuery(data=b'addsaldo'))
