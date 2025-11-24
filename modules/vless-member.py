@@ -1,4 +1,4 @@
-from cybervpn import *
+from mousevpn import *
 import requests
 import subprocess
 import time
@@ -77,7 +77,7 @@ async def create_vless(event):
 http://{DOMAIN}:81/vless-{user}.yaml
 **◇━━━━━━━━━━━━━━━━━◇**
 **» Expired Until:** `{later}`
-*» 🛂@wongedan_kuwibebas**
+*» 🛂@mousethain**
 **◇━━━━━━━━━━━━━━━━━◇**
 **» Link QR  :**
 https://api.qrserver.com/v1/create-qr-code/?size=400x400&data={x[0]}
@@ -333,7 +333,7 @@ async def trial_vless(event):
 http://{DOMAIN}:81/vless-{remarks}.yaml
 **◇━━━━━━━━━━━━━━━━━◇**
 **» Expired Until :** `60 Minutes`
-**» 🛂@wongedan_kuwibebas**
+**» 🛂@mousethain**
 **◇━━━━━━━━━━━━━━━━━◇**
 **» Link QR  :**
 https://api.qrserver.com/v1/create-qr-code/?size=400x400&data={x[0]}
