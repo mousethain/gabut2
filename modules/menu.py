@@ -19,7 +19,7 @@ async def start_menu(event):
 
     if check_user_registration(user_id):
         try:
-            saldo_aji, level = get_saldo_and_level_from_db(user_id)
+            saldo_mu, level = get_saldo_and_level_from_db(user_id)
 
             if level == "user":
                 member_inline = [
@@ -29,7 +29,7 @@ async def start_menu(event):
                     [Button.inline("🎲Trojan Menu🎲", "trojan-member"),
                      Button.inline("🎲Socks Menu🎲", "shadowsocks-member")],
                     [Button.inline("🎲Noobzv Vpn🎲", "noobzvpn-member")],
-                    [Button.url("🛂Tele Group🛂", "https://t.me/gretongers_jatim"),
+                    [Button.url("contact", "https://t.me/mousethain"),
                      Button.inline("🕊topup manual🕊", f"topup")]
                 ]
 
@@ -54,14 +54,13 @@ async def start_menu(event):
 **» Anti DDoS status:** `{get_ddos_status()}`
 **━━━━━━━━━━━━━━━━**
 **» 🎲Version:** `v3.1.1`
-**» 🎲channel:** `@gretongers_jatim`
-**» 🎲Bot by @wongedan_kuwibebas **
+**» 🎲contact:** `@mousethain`
 **» 🎲Your ID ** `{user_id}`
 **» 🎲Harga SSH    IDR.10.000 **
 **» 🎲Harga VMESS  IDR.15.000 **
 **» 🎲Harga VLESS  IDR.15.000 **
 **» 🎲Harga TROJAN IDR.15.000 **
-**» 🎲SISA SALDO MU: ** `RP.{saldo_aji}`
+**» 🎲SISA SALDO MU: ** `RP.{saldo_mu}`
 **━━━━━━━━━━━━━━━━**
 """
                 x = await event.edit(member_msg, buttons=member_inline)
@@ -83,7 +82,7 @@ async def start_menu(event):
                     [Button.inline("🎲Add Saldo Member🎲", "addsaldo")],
                     [Button.inline("🖥️Check Vps Info🖥️", "info"),
                      Button.inline("⚙️Other Settings⚙️", "setting")],
-                    [Button.url("🛂contact🛂", "https://t.me/mousethain")]
+                    [Button.url("contact", "https://t.me/mousethain")]
                 ]
 
                 admin_msg = f"""
