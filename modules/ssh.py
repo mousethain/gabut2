@@ -27,7 +27,7 @@ async def ssh(event):
 **» Hostname/IP:** `{DOMAIN}`
 **» ISP:** `{location_info["isp"]}`
 **» Country:** `{location_info["country"]}`
-**» 🛂@wongedan_kuwibebas**
+**» 🛂@mousethain**
 **━━━━━━━━━━━━━━━━**
 """
         await event.edit(msg, buttons=inline)
@@ -57,7 +57,7 @@ async def ssh(event):
 **» Hostname/IP:** `{DOMAIN}`
 **» ISP:** `{location_info["isp"]}`
 **» Country:** `{location_info["country"]}`
-**» 🛂@wongedan_kuwibebas**
+**» 🛂@mousethain**
 **━━━━━━━━━━━━━━━━**
 """
         await event.edit(msg, buttons=inline)
