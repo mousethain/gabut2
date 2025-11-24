@@ -1,4 +1,4 @@
-from cybervpn import *
+from mousevpn import *
 import subprocess
 import json
 import re
@@ -109,7 +109,7 @@ async def create_vmess(event):
 `{b[2].strip("'")}`
 **◇━━━━━━━━━━━━━━━━━◇**
 **» Expired Until:** `{later}`
-*» 🛂@wongedan_kuwibebas**
+*» 🛂@mousethain**
 **◇━━━━━━━━━━━━━━━━━◇**
 **openclass:**
 http://{DOMAIN}:81/vmess-{z["ps"]}.yaml
@@ -216,7 +216,7 @@ async def trial_vmess(event):
 `{b[2].strip("'")}`
 **◇━━━━━━━━━━━━━━━━━◇**
 **» Expired Until:** `1 hari`
-*» 🛂@wongedan_kuwibebas**
+*» 🛂@mousethain**
 **◇━━━━━━━━━━━━━━━━━◇**
 **openclass:**
 http://{DOMAIN}:81/vmess-{z["ps"]}.yaml
