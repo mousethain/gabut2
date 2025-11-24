@@ -1,4 +1,4 @@
-from cybervpn import *
+from mousevpn import *
 import subprocess
 @bot.on(events.CallbackQuery(data=b'show-ssh'))
 async def show_ssh(event):
