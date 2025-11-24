@@ -1,5 +1,5 @@
 import requests
-from cybervpn import *
+from mousevpn import *
 
 @bot.on(events.CallbackQuery(data=b'ssh'))
 async def ssh(event):
