@@ -175,7 +175,7 @@ async def rest(event):
             try:
                 restore = await event.client.download_media(
                     await event.get_reply_message(),
-                    "cybervpn/",
+                    "mousevpn/",
                 )
 
                 if "(" not in restore:
