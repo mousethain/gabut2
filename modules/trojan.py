@@ -1,4 +1,4 @@
-from cybervpn import *
+from mousevpn import *
 import requests
 import subprocess
 @bot.on(events.CallbackQuery(data=b'create-trojan'))
@@ -80,7 +80,7 @@ async def create_trojan(event):
 http://{DOMAIN}:81/trojan-{user}.yaml
 **◇━━━━━━━━━━━━━━━━━◇**
 **Expired Until:** `{later}`
-*» 🛂@wongedan_kuwibebas**
+*» 🛂@mousethain**
 **◇━━━━━━━━━━━━━━━━━◇**
 https://api.qrserver.com/v1/create-qr-code/?size=400x400&data={b[0]}
 """
@@ -187,7 +187,7 @@ async def trial_trojan(event):
 http://{DOMAIN}:81/trojan-{remarks}.yaml
 **◇━━━━━━━━━━━━━━━━━◇**
 **» Expired Until:** `60 Minutes`
-*» 🛂@wongedan_kuwibebas**
+*» 🛂@mousethain**
 **◇━━━━━━━━━━━━━━━━━◇**
 https://api.qrserver.com/v1/create-qr-code/?size=400x400&data={b[0]}
 """
