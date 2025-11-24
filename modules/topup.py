@@ -1,4 +1,4 @@
-from cybervpn import *
+from mousevpn import *
 from telethon import events, Button
 import random
 import sys
