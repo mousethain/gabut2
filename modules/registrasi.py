@@ -1,4 +1,4 @@
-from cybervpn import *
+from mousevpn import *
 import subprocess
 import datetime as DT
 
@@ -33,7 +33,7 @@ async def registrasi_handler(event):
 **» Ketik /menu untuk login**
 **━━━━━━━━━━━━━━━━**
 **» Registration Date:** `{later}`
-**» 🛂@wongedan_kuwibebas**
+**» 🛂@mousethaih**
 **━━━━━━━━━━━━━━━━**
 """
     inline = [
