@@ -12,7 +12,7 @@ async def trial_ssh(event):
         exp = "1"
         ip = "1"
         
-        with open(f'/etc/cybervpn/limit/ssh/ip/{user}', 'w') as file:
+        with open(f'/etc/mousevpn/limit/ssh/ip/{user}', 'w') as file:
             file.write(ip)
 
         cmd = f'useradd -e `date -d "{exp} days" +"%Y-%m-%d"` -s /bin/false -M {user} && echo "{pw}\n{pw}" | passwd {user}'
