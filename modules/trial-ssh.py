@@ -1,4 +1,4 @@
-from cybervpn import *
+from mousevpn import *
 import subprocess
 import datetime as DT
 import random
@@ -12,7 +12,7 @@ async def trial_ssh(event):
         exp = "1"
         ip = "1"
         
-        with open(f'/etc/cybervpn/limit/ssh/ip/{user}', 'w') as file:
+        with open(f'/etc/mousevpn/limit/ssh/ip/{user}', 'w') as file:
             file.write(ip)
 
         cmd = f'useradd -e `date -d "{exp} days" +"%Y-%m-%d"` -s /bin/false -M {user} && echo "{pw}\n{pw}" | passwd {user}'
@@ -70,12 +70,11 @@ async def trial_ssh(event):
 `GET wss:/// HTTP/1.1[crlf]Host: {DOMAIN}[crlf]Upgrade: websocket[crlf]Connection: Keep-Alive[crlf][crlf]`
 **━━━━━━━━━━━━━━━━**
 **» Expired Until:** `{later}`
-**» 🛂@wongedan_kuwibebas**
+**» 🛂@mousethain**
 **━━━━━━━━━━━━━━━━**
 """
             inline = [
-                [Button.url("[ Contact ]", "t.me/wongedan_kuwibebas"),
-                 Button.url("[ Channel ]", "t.me/gretongers_jatim")]
+                [Button.url("[ Contact ]", "t.me/mousethain")]
             ]
             await event.respond(msg, buttons=inline)
 
