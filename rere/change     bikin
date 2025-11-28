@@ -1,0 +1,77 @@
+#!/usr/bin/env bash
+# ========================================================
+# Script: change-drive-account
+# Fungsi: Menghapus konfigurasi Rclone lama dan memulai wizard baru
+# Ini adalah proses interaktif untuk mendapatkan token Google Drive baru
+# ========================================================
+
+# === KONSTANTA & WARNA ===
+RED='\e[31m'
+GREEN='\e[32m'
+WHITE='\e[97m'
+NC='\e[0m' 
+CONF_FILE="/root/.config/rclone/rclone.conf"
+MAX_ATTEMPTS=3
+
+# Asumsi perintah 'menu-backup' tersedia di PATH untuk kembali ke submenu
+
+clear
+echo -e "${WHITE}────────────────────────────${NC}"
+echo -e "${GREEN}  GANTI AKUN GOOGLE DRIVE ${NC}"
+echo -e "${WHITE}────────────────────────────${NC}"
+
+# Konfirmasi sebelum penghapusan file kritis
+read -p "⚠️ PERINGATAN: Semua konfigurasi Rclone lama akan dihapus. Lanjut? (y/n): " confirm
+if [[ "$confirm" != "y" && "$confirm" != "Y" ]]; then
+    echo -e "\n${GREEN}Proses dibatalkan. Kembali ke Menu Database dalam 2 detik...${NC}"
+    sleep 2
+    menu-backup
+    exit 0
+fi
+
+# Hapus file konfigurasi Rclone yang ada
+rm -f $CONF_FILE
+echo -e "${GREEN}Konfigurasi Rclone lama telah dihapus.${NC}"
+
+# ----------------------------------------------------
+# LOOP VERIFIKASI (Mencegah kegagalan fatal)
+# ----------------------------------------------------
+ATTEMPTS=0
+while [ ! -f "$CONF_FILE" ] && [ $ATTEMPTS -lt $MAX_ATTEMPTS ]; do
+    ATTEMPTS=$((ATTEMPTS + 1))
+    echo -e "\n${GREEN}================== INSTRUKSI (Percobaan $ATTEMPTS/$MAX_ATTEMPTS) ===================${NC}"
+    echo -e "1. Ketik ${WHITE}'n'${NC} (New remote)."
+    echo -e "2. Beri nama remote: ${RED}rerechan${NC}" # KRUSIAL: Pastikan nama ini agar script backup/restore bekerja
+    echo -e "3. Pilih nomor ${WHITE}'drive'${NC} (Google Drive)."
+    echo -e "4. Ikuti instruksi OAuth (Buka URL, dapatkan kode, dan masukkan kode)."
+    echo -e "5. Setelah selesai, ${WHITE}KETIK 'q' UNTUK KELUAR & SIMPAN.${NC}"
+    echo -e "================================================${NC}\n"
+    sleep 2
+    
+    # Jalankan konfigurasi Rclone
+    echo -e "${GREEN}Memulai Rclone Config Interaktif...${NC}"
+    rclone config
+    
+    if [ ! -f "$CONF_FILE" ]; then
+        echo -e "\n${RED}⚠️ GAGAL! File konfigurasi ($CONF_FILE) belum dibuat.${NC}"
+        echo "Anda mungkin keluar sebelum proses selesai atau lupa menekan 'q'."
+        read -n 1 -s -r -p "Tekan tombol apa saja untuk mencoba lagi..."
+        clear
+    fi
+done
+
+# ----------------------------------------------------
+# HASIL AKHIR
+# ----------------------------------------------------
+if [ -f "$CONF_FILE" ]; then
+    echo -e "\n${GREEN}✅ Konfigurasi Rclone baru Selesai!${NC}"
+    echo -e "Script ${WHITE}backup${NC} dan ${WHITE}restore${NC} kini terhubung ke akun baru."
+else
+    echo -e "\n${RED}❌ GAGAL TOTAL!${NC}"
+    echo -e "Proses pembuatan konfigurasi GAGAL setelah $MAX_ATTEMPTS kali percobaan."
+    echo -e "Anda dapat mencoba lagi dengan memilih Opsi ${WHITE}3${NC} di Menu Database."
+fi
+
+echo -e "Kembali ke Menu Database dalam 3 detik..."
+sleep 3
+menu-backup
