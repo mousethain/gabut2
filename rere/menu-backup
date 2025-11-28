@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # ========================================================
-# Script: menu-backup
-# Fungsi: Menampilkan submenu dan memanggil 3 script eksekutor.
+# Script      : menu-backup
+# Script by   : Mousevpn
 # ========================================================
 
 # === WARNA ===
@@ -37,5 +37,4 @@ menu-backup-display() {
     esac
 }
 
-# Jalankan menu
 menu-backup-display
