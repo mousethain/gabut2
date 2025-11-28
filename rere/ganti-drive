@@ -1,8 +1,7 @@
 #!/usr/bin/env bash
 # ========================================================
-# Script: change-drive-account
-# Fungsi: Menghapus konfigurasi Rclone lama dan memulai wizard baru
-# Ini adalah proses interaktif untuk mendapatkan token Google Drive baru
+# Script    : change-drive-account (Otomatis Update Nama Remote)
+# script by : Mousevpn
 # ========================================================
 
 # === KONSTANTA & WARNA ===
@@ -13,15 +12,32 @@ NC='\e[0m'
 CONF_FILE="/root/.config/rclone/rclone.conf"
 MAX_ATTEMPTS=3
 
-# Asumsi perintah 'menu-backup' tersedia di PATH untuk kembali ke submenu
+OLD_REMOTE_NAME="rerechan" 
+FILES_TO_UPDATE="/usr/local/sbin/backup /usr/local/sbin/restore" 
 
 clear
 echo -e "${WHITE}────────────────────────────${NC}"
-echo -e "${GREEN}  GANTI AKUN GOOGLE DRIVE ${NC}"
+echo -e "${GREEN}  GANTI AKUN GOOGLE DRIVE (OTOMATIS) ${NC}"
 echo -e "${WHITE}────────────────────────────${NC}"
 
-# Konfirmasi sebelum penghapusan file kritis
-read -p "⚠️ PERINGATAN: Semua konfigurasi Rclone lama akan dihapus. Lanjut? (y/n): " confirm
+echo -e "Nama remote lama yang akan diganti: ${RED}${OLD_REMOTE_NAME}${NC}"
+read -rp "Masukkan NAMA REMOTE BARU (Contoh: 'backup_saya', tanpa spasi): " NEW_REMOTE_NAME
+
+if [ -z "$NEW_REMOTE_NAME" ]; then
+    echo -e "${RED}Nama remote tidak boleh kosong! Proses dibatalkan.${NC}"
+    sleep 2
+    menu-backup
+    exit 1
+fi
+if [[ "$NEW_REMOTE_NAME" == *[:\']* ]]; then
+    echo -e "${RED}Nama remote tidak boleh mengandung karakter ':' atau spasi! Proses dibatalkan.${NC}"
+    sleep 2
+    menu-backup
+    exit 1
+fi
+
+echo
+read -p "⚠️ PERINGATAN: Konfigurasi lama akan dihapus. Lanjut? (y/n): " confirm
 if [[ "$confirm" != "y" && "$confirm" != "Y" ]]; then
     echo -e "\n${GREEN}Proses dibatalkan. Kembali ke Menu Database dalam 2 detik...${NC}"
     sleep 2
@@ -34,16 +50,16 @@ rm -f $CONF_FILE
 echo -e "${GREEN}Konfigurasi Rclone lama telah dihapus.${NC}"
 
 # ----------------------------------------------------
-# LOOP VERIFIKASI (Mencegah kegagalan fatal)
+#                 LOOP VERIFIKASI
 # ----------------------------------------------------
 ATTEMPTS=0
 while [ ! -f "$CONF_FILE" ] && [ $ATTEMPTS -lt $MAX_ATTEMPTS ]; do
     ATTEMPTS=$((ATTEMPTS + 1))
     echo -e "\n${GREEN}================== INSTRUKSI (Percobaan $ATTEMPTS/$MAX_ATTEMPTS) ===================${NC}"
     echo -e "1. Ketik ${WHITE}'n'${NC} (New remote)."
-    echo -e "2. Beri nama remote: ${RED}rerechan${NC}" # KRUSIAL: Pastikan nama ini agar script backup/restore bekerja
+    echo -e "2. Beri nama remote: ${RED}${NEW_REMOTE_NAME}${NC} (Gunakan nama yang baru Anda input)."
     echo -e "3. Pilih nomor ${WHITE}'drive'${NC} (Google Drive)."
-    echo -e "4. Ikuti instruksi OAuth (Buka URL, dapatkan kode, dan masukkan kode)."
+    echo -e "4. Ikuti instruksi OAuth di browser (salin kode dan paste)."
     echo -e "5. Setelah selesai, ${WHITE}KETIK 'q' UNTUK KELUAR & SIMPAN.${NC}"
     echo -e "================================================${NC}\n"
     sleep 2
@@ -61,11 +77,25 @@ while [ ! -f "$CONF_FILE" ] && [ $ATTEMPTS -lt $MAX_ATTEMPTS ]; do
 done
 
 # ----------------------------------------------------
-# HASIL AKHIR
+#               PENGGANTIAN NAMA REMOTE
 # ----------------------------------------------------
 if [ -f "$CONF_FILE" ]; then
     echo -e "\n${GREEN}✅ Konfigurasi Rclone baru Selesai!${NC}"
-    echo -e "Script ${WHITE}backup${NC} dan ${WHITE}restore${NC} kini terhubung ke akun baru."
+    
+    # 4. Logika Otomatis Update Script
+    echo -e "${WHITE}────────────────────────────${NC}"
+    echo -e "${GREEN}Mengubah nama remote di script lama...${NC}"
+    
+    for file in $FILES_TO_UPDATE; do
+        if [ -f "$file" ]; then
+            sed -i "s|${OLD_REMOTE_NAME}:|${NEW_REMOTE_NAME}:|g" "$file"
+            echo -e "   - ${GREEN}SUCCESS:${NC} ${file}"
+        else
+             echo -e "   - ${RED}SKIP:${NC} ${file} tidak ditemukan."
+        fi
+    done
+    
+    echo -e "\nScript ${WHITE}backup${NC} dan ${WHITE}restore${NC} kini terhubung ke remote ${WHITE}${NEW_REMOTE_NAME}${NC}."
 else
     echo -e "\n${RED}❌ GAGAL TOTAL!${NC}"
     echo -e "Proses pembuatan konfigurasi GAGAL setelah $MAX_ATTEMPTS kali percobaan."
