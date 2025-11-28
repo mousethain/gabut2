@@ -25,10 +25,9 @@ menu-backup-display() {
     read -p "Input Options: " opt_backup
     
     case $opt_backup in
-        # Memanggil script global 'backup' yang sudah ada
-        1) backup ; backup ;;       
-        2) restore ; restore ;;
-        3) ganti-drive ; menu-backup ;;
+        1) backup ;;       
+        2) restore ;;
+        3) ganti-drive ;;
         0) menu ;;                       
         *) echo -e "${RED}Pilihan tidak valid!${NC}"; sleep 1; menu-backup ;;
     esac
