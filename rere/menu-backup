@@ -26,12 +26,9 @@ menu-backup-display() {
     
     case $opt_backup in
         # Memanggil script global 'backup' yang sudah ada
-        1) backup ; menu-backup ;;       
-        # Memanggil script global 'restore' yang sudah ada
-        2) restore ; menu-backup ;;      
-        # Memanggil script 'change-drive-account' yang baru dibuat
-        3) change-drive-account ; menu-backup ;; 
-        # Memanggil menu utama
+        1) backup ; backup ;;       
+        2) restore ; restore ;;
+        3) ganti-drive ; menu-backup ;;
         0) menu ;;                       
         *) echo -e "${RED}Pilihan tidak valid!${NC}"; sleep 1; menu-backup ;;
     esac
