@@ -1,9 +1,11 @@
 #!/bin/bash
+# ========================================================
+# script modifikasi agar menambah sisa masa aktif akun
+# ========================================================
+
 dateFromServer=$(curl -v --insecure --silent https://google.com/ 2>&1 | grep Date | sed -e 's/< Date: //')
 biji=`date +"%Y-%m-%d" -d "$dateFromServer"`
 #########################
-
-
 
 clear
 echo -e "━━━━━━━━━━━"
@@ -12,33 +14,57 @@ echo -e "━━━━━━━━━━━"
 echo
 read -p "Username : " User
 egrep "^$User" /etc/passwd >/dev/null
+
 if [ $? -eq 0 ]; then
-read -p "Day Extend : " Days
-Today=`date +%s`
-Days_Detailed=$(( $Days * 86400 ))
-Expire_On=$(($Today + $Days_Detailed))
-Expiration=$(date -u --date="1970-01-01 $Expire_On sec GMT" +%Y/%m/%d)
-Expiration_Display=$(date -u --date="1970-01-01 $Expire_On sec GMT" '+%d %b %Y')
-passwd -u $User
-usermod -e  $Expiration $User
-egrep "^$User" /etc/passwd >/dev/null
-clear
-echo -e "━━━━━━━━━━━"
-echo -e "RENEW  USER "
-echo -e "━━━━━━━━━━━"  
-echo -e ""
-echo -e " Username : $User"
-echo -e " Days Added : $Days Days"
-echo -e " Expires on :  $Expiration_Display"
-echo -e ""
-echo -e "━━━━━━━━━━━"
+    read -p "Day Extend : " Days
+
+    Today=$(date +%Y/%m/%d)
+
+    Existing_Expiry_Date=$(chage -l $User | grep 'Account expires' | awk -F': ' '{print $2}')
+    
+    if [[ "$Existing_Expiry_Date" == "never" || -z "$Existing_Expiry_Date" ]]; then
+        Start_Date="$Today"
+        echo -e "Akun baru/belum diset masa aktif. Dimulai dari Hari Ini."
+    else
+        Start_Date_Existing=$(date -d "$Existing_Expiry_Date" +%Y/%m/%d)
+
+        Expiry_Seconds=$(date -d "$Start_Date_Existing" +%s)
+        Current_Seconds=$(date -d "$Today" +%s)
+        
+        if [ $Expiry_Seconds -lt $Current_Seconds ]; then
+            # Kasus 1: Sudah expired. Reset tanggal mulai ke Hari Ini.
+            Start_Date="$Today"
+            echo -e "Akun telah kadaluarsa. Perpanjangan dimulai dari Hari Ini."
+        else
+            Start_Date="$Start_Date_Existing"
+            echo -e "Masa aktif akan diakumulasi dari tanggal $Existing_Expiry_Date."
+        fi
+    fi
+
+    Expiration=$(date -d "$Start_Date + $Days days" +%Y/%m/%d)
+    Expiration_Display=$(date -d "$Start_Date + $Days days" '+%d %b %Y')
+    
+    passwd -u $User
+    usermod -e "$Expiration" $User
+
+    clear
+    echo -e "━━━━━━━━━━━"
+    echo -e "RENEW  USER "
+    echo -e "━━━━━━━━━━━"  
+    echo -e ""
+    echo -e " ✅ Username : $User"
+    echo -e " ➕ Days Added : $Days Days"
+    echo -e " 📅 Expires on :  $Expiration_Display"
+    echo -e ""
+    echo -e "━━━━━━━━━━━"
+
 else
-clear
-echo -e "━━━━━━━━━━━"
-echo -e "RENEW  USER "
-echo -e "━━━━━━━━━━━"  
-echo -e ""
-echo -e "   Username Doesnt Exist      "
-echo -e ""
-echo -e "━━━━━━━━━━━"
+    clear
+    echo -e "━━━━━━━━━━━"
+    echo -e "RENEW  USER "
+    echo -e "━━━━━━━━━━━"  
+    echo -e ""
+    echo -e "   Username Doesnt Exist     "
+    echo -e ""
+    echo -e "━━━━━━━━━━━"
 fi
