@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+# ========================================================
+# Script: menu-backup
+# Fungsi: Menampilkan submenu dan memanggil 3 script eksekutor.
+# ========================================================
+
+# === WARNA ===
+RED='\e[31m'
+GREEN='\e[32m'
+WHITE='\e[97m'
+NC='\e[0m' 
+
+menu-backup-display() {
+    clear
+    echo -e "${WHITE}────────────────────────────${NC}"
+    echo -e "${GREEN}  MENU DATABASE & BACKUP  ${NC}"
+    echo -e "${WHITE}────────────────────────────${NC}"
+    echo -e "1. Backup Data ke Google Drive (Manual)"
+    echo -e "2. Restore Data dari Google Drive"
+    echo -e "3. Ganti Akun Google Drive (Rclone)"
+    echo -e "${WHITE}────────────────────────────${NC}"
+    echo -e "0. Kembali ke Menu Utama"
+    echo -e "${WHITE}────────────────────────────${NC}"
+    
+    read -p "Input Options: " opt_backup
+    
+    case $opt_backup in
+        # Memanggil script global 'backup' yang sudah ada
+        1) backup ; menu-backup ;;       
+        # Memanggil script global 'restore' yang sudah ada
+        2) restore ; menu-backup ;;      
+        # Memanggil script 'change-drive-account' yang baru dibuat
+        3) change-drive-account ; menu-backup ;; 
+        # Memanggil menu utama
+        0) menu ;;                       
+        *) echo -e "${RED}Pilihan tidak valid!${NC}"; sleep 1; menu-backup ;;
+    esac
+}
+
+# Jalankan menu
+menu-backup-display
