@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # ========================================================
-# Credit Code By Project Rerechan
-# Author: Rerechan02 (DindaPutriFN)
+# Credit Code By mousevpn
+# Author: mousevpn
 # License: This configuration is licensed for personal or internal use only.
 # ========================================================
 
@@ -18,7 +18,7 @@ bw=$(echo "$input_data" | jq -r '.bw')
 masaaktif=$(echo "$input_data" | jq -r '.masaaktif')
 
 # Password tetap sama
-pass="fn-project.com"
+pass="mousevpn.my.id"
 
 # Menambahkan akun NoobzVPN
 noobzvpns add --password "$pass" "$user" --bandwidth $bw --devices $device --expired $masaaktif &> /dev/null
