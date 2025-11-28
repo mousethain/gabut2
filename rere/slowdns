@@ -26,7 +26,7 @@ draw_line() {
 header() {
   clear
   draw_line
-  echo -e "${bold}${cyan}         Project Rerechan - SlowDNS Manager${plain}"
+  echo -e "${bold}${cyan}         mousevpn - SlowDNS Manager${plain}"
   draw_line
 }
 
