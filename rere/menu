@@ -71,8 +71,8 @@ echo -e " 05. Menu V2ray Trojan                               "
 echo -e "─────────────────────────────────────────────────────"
 echo -e "Other Menu:                                          "
 echo -e " 06. Menu Bot Telegram                               "
-echo -e " 07. Backup Database                                 "
-echo -e " 08. Restore Database                                "
+echo -e " 07. Menu Backup                                     "
+echo -e " 08. Update                                          "
 echo -e " 09. Menu Domain & Certificate                       "
 echo -e " 10. Restart All Service                             "
 echo -e " 11. Menu Rest API Create Account                    "
@@ -88,8 +88,8 @@ case $opt in
 4|04) menu-vless ;;
 5|05) menu-trojan ;;
 6|06) bot-menu ;;
-7|07) backup ;;
-8|08) restore ;;
+7|07) menu-backup ;;
+8|08) update ;;
 9|09) change-domain ;;
 10) clear ; systemctl daemon-reload ; pkill sslh ; systemctl restart v2ray proxy danted badvpn udp-custom nginx sslh ; clear ; echo -e "success restart all service" ; sleep 5 ; menu ;;
 11) menu-api ;;
