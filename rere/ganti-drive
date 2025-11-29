@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # ========================================================
-# Script: change-drive-account (FINAL FIX: Remote Update Otomatis - Robust SED)
+#           Script Ganti Akun Drive By Mousevpn
 # ========================================================
 
 # === KONSTANTA & WARNA ===
@@ -10,7 +10,6 @@ WHITE='\e[97m'
 NC='\e[0m' 
 CONF_FILE="/root/.config/rclone/rclone.conf"
 MAX_ATTEMPTS=3
-# Daftar file yang perlu diupdate nama remotenya
 FILES_TO_UPDATE="/usr/local/sbin/backup /usr/local/sbin/restore" 
 # ========================
 
@@ -19,8 +18,6 @@ echo -e "${WHITE}─────────────────────
 echo -e "${GREEN}  GANTI AKUN GOOGLE DRIVE (OTOMATIS) ${NC}"
 echo -e "${WHITE}────────────────────────────${NC}"
 
-# 1. Cek Nama Remote Aktif Saat Ini
-# Mencari variabel RCLONE_REMOTE di script backup dan mengambil nilainya
 OLD_REMOTE_NAME=$(grep 'RCLONE_REMOTE=' /usr/local/sbin/backup 2>/dev/null | cut -d'"' -f2)
 
 if [ -z "$OLD_REMOTE_NAME" ]; then
@@ -38,7 +35,6 @@ if [ -z "$NEW_REMOTE_NAME" ]; then
     exit 1
 fi
 
-# ... (Logika Konfirmasi dan rm -f $CONF_FILE tetap sama) ...
 read -p "⚠️ PERINGATAN: Konfigurasi Rclone lama akan dihapus. Lanjut? (y/n): " confirm
 if [[ "$confirm" != "y" && "$confirm" != "Y" ]]; then
     echo -e "\n${GREEN}Proses dibatalkan.${NC}"
@@ -51,7 +47,7 @@ rm -f $CONF_FILE
 echo -e "${GREEN}Konfigurasi Rclone lama telah dihapus.${NC}"
 
 # ----------------------------------------------------
-# LOOP VERIFIKASI Rclone Config (Tetap sama)
+#            LOOP VERIFIKASI Rclone Config 
 # ----------------------------------------------------
 ATTEMPTS=0
 while [ ! -f "$CONF_FILE" ] && [ $ATTEMPTS -lt $MAX_ATTEMPTS ]; do
@@ -79,18 +75,16 @@ while [ ! -f "$CONF_FILE" ] && [ $ATTEMPTS -lt $MAX_ATTEMPTS ]; do
 done
 
 # ----------------------------------------------------
-# HASIL AKHIR & OTOMATISASI SCRIPT (FIXED SED LOGIC)
+#        HASIL AKHIR & OTOMATISASI SCRIPT
 # ----------------------------------------------------
 if [ -f "$CONF_FILE" ]; then
     echo -e "\n${GREEN}✅ Konfigurasi Rclone baru Selesai!${NC}"
-    
-    # Logika Otomatis Update Script
+
     echo -e "${WHITE}────────────────────────────${NC}"
     echo -e "${GREEN}Mengubah variabel remote di script backup & restore...${NC}"
     
     for file in $FILES_TO_UPDATE; do
         if [ -f "$file" ]; then
-            # Menggunakan SED yang lebih kuat: mengganti nilai variabel RCLONE_REMOTE
             sed -i "s|RCLONE_REMOTE=\"${OLD_REMOTE_NAME}\"|RCLONE_REMOTE=\"${NEW_REMOTE_NAME}\"|g" "$file"
             echo -e "   - ${GREEN}SUCCESS:${NC} ${file}"
         else
@@ -98,7 +92,6 @@ if [ -f "$CONF_FILE" ]; then
         fi
     done
     
-    # Pengecekan setelah perubahan
     NEW_REMOTE_IN_SCRIPT=$(grep 'RCLONE_REMOTE=' /usr/local/sbin/backup 2>/dev/null | cut -d'"' -f2)
     
     if [ "$NEW_REMOTE_IN_SCRIPT" == "$NEW_REMOTE_NAME" ]; then
