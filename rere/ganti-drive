@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # ========================================================
-# Script: change-drive-account (FINAL FIX: Remote Update Otomatis)
+# Script: change-drive-account (FINAL FIX: Remote Update Otomatis - Robust SED)
 # ========================================================
 
 # === KONSTANTA & WARNA ===
@@ -24,7 +24,8 @@ echo -e "${WHITE}─────────────────────
 OLD_REMOTE_NAME=$(grep 'RCLONE_REMOTE=' /usr/local/sbin/backup 2>/dev/null | cut -d'"' -f2)
 
 if [ -z "$OLD_REMOTE_NAME" ]; then
-    OLD_REMOTE_NAME="rerechan" # Fallback jika variabel tidak ditemukan
+    # Fallback ke default lama jika gagal membaca variabel
+    OLD_REMOTE_NAME="rerechan" 
 fi
 
 echo -e "Nama remote AKTIF saat ini: ${RED}${OLD_REMOTE_NAME}${NC}"
@@ -37,7 +38,7 @@ if [ -z "$NEW_REMOTE_NAME" ]; then
     exit 1
 fi
 
-# ... (Konfirmasi dan rm -f $CONF_FILE) ...
+# ... (Logika Konfirmasi dan rm -f $CONF_FILE tetap sama) ...
 read -p "⚠️ PERINGATAN: Konfigurasi Rclone lama akan dihapus. Lanjut? (y/n): " confirm
 if [[ "$confirm" != "y" && "$confirm" != "Y" ]]; then
     echo -e "\n${GREEN}Proses dibatalkan.${NC}"
@@ -50,14 +51,14 @@ rm -f $CONF_FILE
 echo -e "${GREEN}Konfigurasi Rclone lama telah dihapus.${NC}"
 
 # ----------------------------------------------------
-# LOOP VERIFIKASI Rclone Config
+# LOOP VERIFIKASI Rclone Config (Tetap sama)
 # ----------------------------------------------------
 ATTEMPTS=0
 while [ ! -f "$CONF_FILE" ] && [ $ATTEMPTS -lt $MAX_ATTEMPTS ]; do
     ATTEMPTS=$((ATTEMPTS + 1))
     echo -e "\n${GREEN}================== INSTRUKSI OTORISASI (Percobaan $ATTEMPTS/$MAX_ATTEMPTS) ===================${NC}"
     echo -e "1. Ketik ${WHITE}'n'${NC} (New remote)."
-    echo -e "2. Beri nama remote: ${RED}${NEW_REMOTE_NAME}${NC}" # Pastikan nama remote baru digunakan
+    echo -e "2. Beri nama remote: ${RED}${NEW_REMOTE_NAME}${NC}" 
     echo -e "3. Pilih nomor ${WHITE}'drive'${NC} (Google Drive)."
     echo -e "4. Pilih ${WHITE}1${NC} untuk 'Full access'."
     echo -e "5. Di semua pertanyaan lainnya (client_id, secret, service_account), tekan ${WHITE}ENTER${NC}."
@@ -78,7 +79,7 @@ while [ ! -f "$CONF_FILE" ] && [ $ATTEMPTS -lt $MAX_ATTEMPTS ]; do
 done
 
 # ----------------------------------------------------
-# HASIL AKHIR & OTOMATISASI SCRIPT (Perbaikan Logika SED)
+# HASIL AKHIR & OTOMATISASI SCRIPT (FIXED SED LOGIC)
 # ----------------------------------------------------
 if [ -f "$CONF_FILE" ]; then
     echo -e "\n${GREEN}✅ Konfigurasi Rclone baru Selesai!${NC}"
@@ -89,19 +90,28 @@ if [ -f "$CONF_FILE" ]; then
     
     for file in $FILES_TO_UPDATE; do
         if [ -f "$file" ]; then
-            # Mengganti variabel RCLONE_REMOTE
+            # Menggunakan SED yang lebih kuat: mengganti nilai variabel RCLONE_REMOTE
             sed -i "s|RCLONE_REMOTE=\"${OLD_REMOTE_NAME}\"|RCLONE_REMOTE=\"${NEW_REMOTE_NAME}\"|g" "$file"
             echo -e "   - ${GREEN}SUCCESS:${NC} ${file}"
         else
-             echo -e "   - ${RED}SKIP:${NC} ${file} tidak ditemukan. (Pastikan ada)"
+             echo -e "   - ${RED}SKIP:${NC} ${file} tidak ditemukan."
         fi
     done
     
-    echo -e "\nScript ${WHITE}backup${NC} dan ${WHITE}restore${NC} kini terhubung ke remote ${WHITE}${NEW_REMOTE_NAME}${NC}."
+    # Pengecekan setelah perubahan
+    NEW_REMOTE_IN_SCRIPT=$(grep 'RCLONE_REMOTE=' /usr/local/sbin/backup 2>/dev/null | cut -d'"' -f2)
+    
+    if [ "$NEW_REMOTE_IN_SCRIPT" == "$NEW_REMOTE_NAME" ]; then
+        echo -e "\nScript ${WHITE}backup${NC} dan ${WHITE}restore${NC} kini terhubung ke remote ${WHITE}${NEW_REMOTE_NAME}${NC}."
+    else
+        echo -e "\n${RED}❌ PERINGATAN KRITIS:${NC} Gagal memperbarui nama remote di script! Script mungkin masih menggunakan '${OLD_REMOTE_NAME}'."
+        echo -e "Silakan edit /usr/local/sbin/backup dan /usr/local/sbin/restore secara manual dan ganti 'RCLONE_REMOTE=\"${OLD_REMOTE_NAME}\"' menjadi 'RCLONE_REMOTE=\"${NEW_REMOTE_NAME}\"'."
+    fi
+
 else
-    echo -e "\n${RED}❌ GAGAL TOTAL!${NC}"
+    echo -e "\n${RED}❌ GAGAL TOTAL! Konfigurasi Rclone gagal dibuat.${NC}"
 fi
 
-echo -e "Kembali ke Menu Database dalam 3 detik..."
-sleep 3
+echo -e "Kembali ke Menu Database dalam 5 detik..."
+sleep 5
 menu-backup
