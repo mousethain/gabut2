@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 # ========================================================
-# Script    : change-drive-account (Otomatis Update Nama Remote)
-# script by : Mousevpn
+# Script: change-drive-account (FINAL FIX: Remote Update Otomatis)
 # ========================================================
 
 # === KONSTANTA & WARNA ===
@@ -11,17 +10,25 @@ WHITE='\e[97m'
 NC='\e[0m' 
 CONF_FILE="/root/.config/rclone/rclone.conf"
 MAX_ATTEMPTS=3
-
-OLD_REMOTE_NAME="rerechan" 
+# Daftar file yang perlu diupdate nama remotenya
 FILES_TO_UPDATE="/usr/local/sbin/backup /usr/local/sbin/restore" 
+# ========================
 
 clear
 echo -e "${WHITE}────────────────────────────${NC}"
 echo -e "${GREEN}  GANTI AKUN GOOGLE DRIVE (OTOMATIS) ${NC}"
 echo -e "${WHITE}────────────────────────────${NC}"
 
-echo -e "Nama remote lama yang akan diganti: ${RED}${OLD_REMOTE_NAME}${NC}"
-read -rp "Masukkan NAMA REMOTE BARU (Contoh: 'backup_saya', tanpa spasi): " NEW_REMOTE_NAME
+# 1. Cek Nama Remote Aktif Saat Ini
+# Mencari variabel RCLONE_REMOTE di script backup dan mengambil nilainya
+OLD_REMOTE_NAME=$(grep 'RCLONE_REMOTE=' /usr/local/sbin/backup 2>/dev/null | cut -d'"' -f2)
+
+if [ -z "$OLD_REMOTE_NAME" ]; then
+    OLD_REMOTE_NAME="rerechan" # Fallback jika variabel tidak ditemukan
+fi
+
+echo -e "Nama remote AKTIF saat ini: ${RED}${OLD_REMOTE_NAME}${NC}"
+read -rp "Masukkan NAMA REMOTE BARU (cth: 'mousevpn', tanpa spasi): " NEW_REMOTE_NAME
 
 if [ -z "$NEW_REMOTE_NAME" ]; then
     echo -e "${RED}Nama remote tidak boleh kosong! Proses dibatalkan.${NC}"
@@ -29,77 +36,70 @@ if [ -z "$NEW_REMOTE_NAME" ]; then
     menu-backup
     exit 1
 fi
-if [[ "$NEW_REMOTE_NAME" == *[:\']* ]]; then
-    echo -e "${RED}Nama remote tidak boleh mengandung karakter ':' atau spasi! Proses dibatalkan.${NC}"
-    sleep 2
-    menu-backup
-    exit 1
-fi
 
-echo
-read -p "⚠️ PERINGATAN: Konfigurasi lama akan dihapus. Lanjut? (y/n): " confirm
+# ... (Konfirmasi dan rm -f $CONF_FILE) ...
+read -p "⚠️ PERINGATAN: Konfigurasi Rclone lama akan dihapus. Lanjut? (y/n): " confirm
 if [[ "$confirm" != "y" && "$confirm" != "Y" ]]; then
-    echo -e "\n${GREEN}Proses dibatalkan. Kembali ke Menu Database dalam 2 detik...${NC}"
+    echo -e "\n${GREEN}Proses dibatalkan.${NC}"
     sleep 2
     menu-backup
     exit 0
 fi
 
-# Hapus file konfigurasi Rclone yang ada
 rm -f $CONF_FILE
 echo -e "${GREEN}Konfigurasi Rclone lama telah dihapus.${NC}"
 
 # ----------------------------------------------------
-#                 LOOP VERIFIKASI
+# LOOP VERIFIKASI Rclone Config
 # ----------------------------------------------------
 ATTEMPTS=0
 while [ ! -f "$CONF_FILE" ] && [ $ATTEMPTS -lt $MAX_ATTEMPTS ]; do
     ATTEMPTS=$((ATTEMPTS + 1))
-    echo -e "\n${GREEN}================== INSTRUKSI (Percobaan $ATTEMPTS/$MAX_ATTEMPTS) ===================${NC}"
+    echo -e "\n${GREEN}================== INSTRUKSI OTORISASI (Percobaan $ATTEMPTS/$MAX_ATTEMPTS) ===================${NC}"
     echo -e "1. Ketik ${WHITE}'n'${NC} (New remote)."
-    echo -e "2. Beri nama remote: ${RED}${NEW_REMOTE_NAME}${NC} (Gunakan nama yang baru Anda input)."
+    echo -e "2. Beri nama remote: ${RED}${NEW_REMOTE_NAME}${NC}" # Pastikan nama remote baru digunakan
     echo -e "3. Pilih nomor ${WHITE}'drive'${NC} (Google Drive)."
-    echo -e "4. Ikuti instruksi OAuth di browser (salin kode dan paste)."
-    echo -e "5. Setelah selesai, ${WHITE}KETIK 'q' UNTUK KELUAR & SIMPAN.${NC}"
+    echo -e "4. Pilih ${WHITE}1${NC} untuk 'Full access'."
+    echo -e "5. Di semua pertanyaan lainnya (client_id, secret, service_account), tekan ${WHITE}ENTER${NC}."
+    echo -e "6. Pada pertanyaan 'Edit advanced config?' dan 'Use auto config?', jawab ${WHITE}'n'${NC}."
+    echo -e "7. Saat muncul ${RED}config_token>${NC}, jalankan ${WHITE}rclone authorize${NC} di Termux/PC Anda untuk mendapatkan token."
+    echo -e "8. Setelah selesai, ${WHITE}KETIK 'q' UNTUK KELUAR & SIMPAN.${NC}"
     echo -e "================================================${NC}\n"
     sleep 2
     
-    # Jalankan konfigurasi Rclone
     echo -e "${GREEN}Memulai Rclone Config Interaktif...${NC}"
     rclone config
     
     if [ ! -f "$CONF_FILE" ]; then
-        echo -e "\n${RED}⚠️ GAGAL! File konfigurasi ($CONF_FILE) belum dibuat.${NC}"
-        echo "Anda mungkin keluar sebelum proses selesai atau lupa menekan 'q'."
+        echo -e "\n${RED}⚠️ GAGAL! File konfigurasi ($CONF_FILE) belum dibuat. (Pastikan Anda mengetik 'q' untuk keluar).${NC}"
         read -n 1 -s -r -p "Tekan tombol apa saja untuk mencoba lagi..."
         clear
     fi
 done
 
 # ----------------------------------------------------
-#               PENGGANTIAN NAMA REMOTE
+# HASIL AKHIR & OTOMATISASI SCRIPT (Perbaikan Logika SED)
 # ----------------------------------------------------
 if [ -f "$CONF_FILE" ]; then
     echo -e "\n${GREEN}✅ Konfigurasi Rclone baru Selesai!${NC}"
     
-    # 4. Logika Otomatis Update Script
+    # Logika Otomatis Update Script
     echo -e "${WHITE}────────────────────────────${NC}"
-    echo -e "${GREEN}Mengubah nama remote di script lama...${NC}"
+    echo -e "${GREEN}Mengubah variabel remote di script backup & restore...${NC}"
     
     for file in $FILES_TO_UPDATE; do
         if [ -f "$file" ]; then
-            sed -i "s|${OLD_REMOTE_NAME}:|${NEW_REMOTE_NAME}:|g" "$file"
+            # Mengganti variabel RCLONE_REMOTE
+            sed -i "s|RCLONE_REMOTE=\"${OLD_REMOTE_NAME}\"|RCLONE_REMOTE=\"${NEW_REMOTE_NAME}\"|g" "$file"
             echo -e "   - ${GREEN}SUCCESS:${NC} ${file}"
         else
-             echo -e "   - ${RED}SKIP:${NC} ${file} tidak ditemukan."
+             echo -e "   - ${RED}SKIP:${NC} ${file} tidak ditemukan. (Pastikan ada)"
         fi
     done
     
     echo -e "\nScript ${WHITE}backup${NC} dan ${WHITE}restore${NC} kini terhubung ke remote ${WHITE}${NEW_REMOTE_NAME}${NC}."
 else
     echo -e "\n${RED}❌ GAGAL TOTAL!${NC}"
-    echo -e "Proses pembuatan konfigurasi GAGAL setelah $MAX_ATTEMPTS kali percobaan."
-    echo -e "Anda dapat mencoba lagi dengan memilih Opsi ${WHITE}3${NC} di Menu Database."
 fi
 
 echo -e "Kembali ke Menu Database dalam 3 detik..."
