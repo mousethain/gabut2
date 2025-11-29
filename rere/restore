@@ -1,23 +1,24 @@
 #!/usr/bin/env bash
 # ========================================================
-#               Script Restore By : Mousevpn
+# Credit Code By Project Rerechan (FINAL FIX: Path, Dependensi, & Password Fleksibel oleh Gemini)
 # ========================================================
 
 clear
 
+# Direktori kerja
 backup_dir="/root"
+TEMP_EXTRACT_DIR="/root/backup_temp" # Direktori sementara untuk ekstraksi
 backup_file=$(ls $backup_dir/*.zip 2>/dev/null | head -n 1)
 
-# warna output
+# Fungsi warna output
 green() { echo -e "\033[32;1m${*}\033[0m"; }
 red() { echo -e "\033[31m${*}\033[0m"; }
 export NC='\033[0m'
 echo -e "$(green "Memulai proses restore...")"
 
 # ------------------------------------------------
-#            Cek & Instalasi Dependensi 
+# Cek & Instalasi Dependensi Kritis
 # ------------------------------------------------
-
 if ! command -v python3 &>/dev/null || ! command -v pip3 &>/dev/null || ! command -v unzip &>/dev/null; then
     echo -e "$(green "Menginstal paket dasar (Python3, pip3, unzip, build-essential)...")"
     apt update -o Acquire::Check-Valid-Until=false && \
@@ -31,14 +32,11 @@ if ! command -v gdown &>/dev/null; then
     { echo -e "$(red "Gagal menginstal gdown!")"; exit 1; }
 fi
 
-if ! command -v rclone &>/dev/null; then
-    echo -e "$(red "PERINGATAN: Rclone tidak terinstal. Restore akan berjalan, tetapi Backup akan gagal!")"
-fi
-
 # ------------------------------------------------
-#          Restore Data & Pengunduhan
+# LOGIKA PENGUNDUHAN & PASSWORD FLEKSIBEL
 # ------------------------------------------------
 
+# ... (Logika pengunduhan file tetap sama) ...
 if [ -z "$backup_file" ]; then
     echo -e "$(green "Tidak ditemukan file backup (.zip) lokal. Memulai pengunduhan...")"
     input=""
@@ -62,11 +60,7 @@ if [ -z "$backup_file" ]; then
     echo -e "$(green "File backup berhasil diunduh: $backup_file")"
 fi
 
-# ------------------------------------------------
-#                   PASSWORD
-# ------------------------------------------------
-
-DEFAULT_PASS="Rerechan02"
+DEFAULT_PASS="Rerechan02" 
 UNZIP_PASS=""
 
 echo -e "\n${WHITE}----------------------------------------${NC}"
@@ -81,7 +75,11 @@ else
     echo -e "$(green "Menggunakan password yang dimasukkan.")"
 fi
 
-unzip -P "$UNZIP_PASS" -o "$backup_file" -d "/root/backup_temp"
+# Ekstrak file backup
+rm -rf "$TEMP_EXTRACT_DIR"
+mkdir -p "$TEMP_EXTRACT_DIR"
+
+unzip -P "$UNZIP_PASS" -o "$backup_file" -d "$TEMP_EXTRACT_DIR"
 
 if [[ $? -ne 0 ]]; then
     echo -e "$(red "Gagal mengekstrak file backup! Password salah atau File Corrupt.")"
@@ -89,20 +87,37 @@ if [[ $? -ne 0 ]]; then
 fi
 
 # ------------------------------------------------
-#              RESTORE & PEMBERSIHAN
+# RESTORE & PEMBERSIHAN (PERBAIKAN PATH KRITIS)
 # ------------------------------------------------
+
+# *** INI ADALAH PERBAIKAN UTAMA: MENENTUKAN JALUR YANG BENAR ***
+# File-file Anda berada di $TEMP_EXTRACT_DIR/backup (yaitu /root/backup_temp/backup)
+RESTORE_SOURCE_DIR="$TEMP_EXTRACT_DIR/backup"
+
 echo -e "$(green "Memulai proses pemulihan data...")"
-cd /root/backup_temp
+
+# Pengecekan keamanan
+if [ ! -d "$RESTORE_SOURCE_DIR" ]; then
+    echo -e "$(red "Struktur file backup tidak valid. Folder 'backup/' tidak ditemukan setelah ekstraksi.")"
+    exit 1
+fi
+
+# Pindah ke direktori sumber yang benar sebelum menyalin
+cd "$RESTORE_SOURCE_DIR"
+
+# Perintah copy dari direktori kerja saat ini (yaitu /root/backup_temp/backup/)
+# Sekarang script bisa menemukan 'v2ray' dan 'noobzvpns'
 cp -r v2ray /usr/local/etc/
 cp -r noobzvpns /etc/
-cp /root/backup_temp/passwd /etc/ &> /dev/null
-cp /root/backup_temp/group /etc/ &> /dev/null
-cp /root/backup_temp/shadow /etc/ &> /dev/null
-cp /root/backup_temp/gshadow /etc/ &> /dev/null
+cp passwd /etc/ &> /dev/null
+cp group /etc/ &> /dev/null
+cp shadow /etc/ &> /dev/null
+cp gshadow /etc/ &> /dev/null
 
 echo -e "$(green "Restore selesai. Membersihkan file sementara...")"
 
-rm -rf /root/backup_temp
+# Hapus file sementara
+rm -rf "$TEMP_EXTRACT_DIR"
 rm -f "$backup_file"
 
 echo -e "$(green "Sistem berhasil dipulihkan.")"
