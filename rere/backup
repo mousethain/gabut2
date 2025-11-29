@@ -1,17 +1,17 @@
 #!/usr/bin/env bash
 # ========================================================
-# Credit Code By Project Rerechan (FINAL FIX: Password Fleksibel & Remote Variabel)
+# Credit Code By Project Rerechan (FINAL FIX: Username, Password, & Remote Variabel)
 # ========================================================
 
 clear
 
 # === KONFIGURASI YANG AKAN DIUBAH SCRIPT CHANGE-DRIVE-ACCOUNT ===
-RCLONE_REMOTE="rerechan" # <--- JANGAN UBAH INI SECARA MANUAL! AKAN DIUBAH SCRIPT CHANGE-DRIVE-ACCOUNT
+RCLONE_REMOTE="rerechan" # JANGAN UBAH INI SECARA MANUAL! Diubah oleh 'change-drive-account'
 DEFAULT_PASS="Rerechan02" 
+DEFAULT_USER="Rerechan02" # <--- USERNAME DEFAULT BARU
 # ============================
 
 # Variabel lain
-USERNAME="Rerechan02"
 tanggal=$(date +"%m-%d-%Y")
 waktu=$(date +"%H-%M-%S")
 random_code=$(openssl rand -hex 4)
@@ -30,19 +30,40 @@ red() { echo -e "\\033[31;1m${*}\\033[0m"; }
 echo -e "$(green "Memulai Backup")"
 sleep 1
 
-# LOGIKA PASSWORD FLEKSIBEL
+# ------------------------------------------------
+# LOGIKA INPUT USERNAME & PASSWORD
+# ------------------------------------------------
+
+# 1. Input Username
 echo -e "\n${WHITE}----------------------------------------${NC}"
-read -rp "Masukkan Password Zip Baru (Kosongkan untuk default '$DEFAULT_PASS'): " user_pass
+read -rp "Masukkan Username Sender (Kosongkan untuk default '$DEFAULT_USER'): " user_input
 echo -e "${WHITE}----------------------------------------${NC}"
 
-if [ -z "$user_pass" ]; then
-    ZIP_PASSWORD="$DEFAULT_PASS"
+if [ -z "$user_input" ]; then
+    USERNAME="$DEFAULT_USER"
+    echo -e "$(green "Menggunakan username default untuk backup ini.")"
 else
-    ZIP_PASSWORD="$user_pass"
+    USERNAME="$user_input"
+    echo -e "$(green "Menggunakan username yang dimasukkan.")"
+fi
+sleep 1
+
+# 2. Input Password
+echo -e "\n${WHITE}----------------------------------------${NC}"
+read -rp "Masukkan Password Zip Baru (Kosongkan untuk default '$DEFAULT_PASS'): " pass_input
+echo -e "${WHITE}----------------------------------------${NC}"
+
+if [ -z "$pass_input" ]; then
+    ZIP_PASSWORD="$DEFAULT_PASS"
+    echo -e "$(green "Menggunakan password default untuk ZIP.")"
+else
+    ZIP_PASSWORD="$pass_input"
+    echo -e "$(green "Menggunakan password yang dimasukkan untuk ZIP.")"
 fi
 sleep 1
 
 # Buat Direktori Backup & Salin File
+# ... (Logika penyalinan tetap sama) ...
 rm -rf "$backup_dir"
 mkdir -p "$backup_dir"
 echo -e "$(green "Menyalin file konfigurasi...")"
@@ -65,7 +86,7 @@ if [[ ! -f "$zip_file" ]]; then
     exit 1
 fi
 
-# Upload ke Google Drive menggunakan variabel remote
+# Upload ke Google Drive
 echo -e "$(green "Mengunggah file ke Google Drive menggunakan remote $RCLONE_REMOTE...")"
 rclone copy "$zip_file" "$RCLONE_REMOTE":backup/
 
@@ -77,16 +98,34 @@ if [[ -z "$url" ]]; then
     exit 1
 fi
 
-# ... (Sisa script untuk Telegram dan display CLI) ...
-
 # Ambil ID file
 backup_id=$(echo "$url" | grep -o 'id=[^&]*' | cut -d'=' -f2)
 link="https://drive.google.com/u/4/uc?id=${backup_id}&export=download"
 
+# Format Pesan Telegram (HTML)
 message="✅ <b>Backup Berhasil!</b>
-...
-"
 
+🆔 <b>ID Backup:</b>
+<pre>$backup_id</pre>
+
+🖥 <b>Informasi Server:</b>
+📛 <b>Nama Pengguna:</b> $USERNAME 
+🌐 <b>Domain:</b> $domain
+🏢 <b>ISP:</b> $asn_info
+🌍 <b>IP VPS:</b> <pre>$ipsaya</pre>
+⏰ <b>Waktu Backup:</b> $tanggal pukul $waktu
+
+📥 <b>Unduh Backup:</b>
+<pre>$link</pre>
+
+🔹 <i>File backup telah tersimpan di Google Drive.</i>
+
+🔒 <b>Keamanan:</b> File backup dilindungi dengan password: <b>$ZIP_PASSWORD</b>
+🔄 Proses backup ini dilakukan secara otomatis untuk menjaga data Anda tetap aman.
+
+✨ <b>Terima kasih telah menggunakan layanan kami!</b>"
+
+# Kirim pesan ke Telegram
 if [ -n "$botToken" ] && [ -n "$chatId" ]; then
     curl -s -X POST "https://api.telegram.org/bot$botToken/sendMessage" \
          -d "chat_id=$chatId" \
@@ -94,12 +133,13 @@ if [ -n "$botToken" ] && [ -n "$chatId" ]; then
          -d "parse_mode=HTML"  &> /dev/null
 fi
 
+# Tampilkan Detail ke CLI
 clear
 echo -e "$(green "Backup dan pengiriman notifikasi selesai.")"
 echo -e "$(green "Detail Backup:")"
 echo -e "🆔 ID Backup: $backup_id"
 echo -e "🖥 Informasi Server:"
-echo -e "┣ 📛 Nama Pengguna: $USERNAME"
+echo -e "┣ 📛 Nama Pengguna: ${RED}$USERNAME${NC}"
 echo -e "┣ 🌐 Domain: $domain"
 echo -e "┣ 🏢 ISP: $asn_info"
 echo -e "┣ 🌍 IP VPS: $ipsaya"
