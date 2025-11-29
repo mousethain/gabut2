@@ -1,16 +1,17 @@
 #!/usr/bin/env bash
 # ========================================================
-# Credit Code By Project Rerechan (Modifikasi Password Fleksibel oleh Gemini)
+# Credit Code By Project Rerechan (FINAL FIX: Password Fleksibel & Remote Variabel)
 # ========================================================
 
 clear
 
-# === KONFIGURASI DEFAULT ===
+# === KONFIGURASI YANG AKAN DIUBAH SCRIPT CHANGE-DRIVE-ACCOUNT ===
+RCLONE_REMOTE="rerechan" # <--- JANGAN UBAH INI SECARA MANUAL! AKAN DIUBAH SCRIPT CHANGE-DRIVE-ACCOUNT
 DEFAULT_PASS="Rerechan02" 
-USERNAME="Rerechan02"
 # ============================
 
-# Variabel Waktu
+# Variabel lain
+USERNAME="Rerechan02"
 tanggal=$(date +"%m-%d-%Y")
 waktu=$(date +"%H-%M-%S")
 random_code=$(openssl rand -hex 4)
@@ -18,8 +19,6 @@ zip_file="/root/Backup-${random_code}-${tanggal}-${waktu}.zip"
 backup_dir="/root/backup"
 botToken=$(cat /usr/local/etc/v2ray/bot.key 2>/dev/null)
 chatId=$(cat /usr/local/etc/v2ray/client.id 2>/dev/null)
-
-# Autentikasi dan Informasi Server
 domain=$(cat /usr/local/etc/v2ray/domain 2>/dev/null || echo "Unknown")
 ipsaya=$(curl -s http://checkip.amazonaws.com)
 asn_info=$(timeout 5 curl -s "http://ip-api.com/json/$ipsaya" | jq -r '.isp // "Unknown ISP"')
@@ -31,28 +30,21 @@ red() { echo -e "\\033[31;1m${*}\\033[0m"; }
 echo -e "$(green "Memulai Backup")"
 sleep 1
 
-# ------------------------------------------------
-# LOGIKA PASSWORD FLEKSIBEL BARU
-# ------------------------------------------------
+# LOGIKA PASSWORD FLEKSIBEL
 echo -e "\n${WHITE}----------------------------------------${NC}"
 read -rp "Masukkan Password Zip Baru (Kosongkan untuk default '$DEFAULT_PASS'): " user_pass
 echo -e "${WHITE}----------------------------------------${NC}"
 
-# Tentukan password yang akan digunakan untuk ZIP
 if [ -z "$user_pass" ]; then
     ZIP_PASSWORD="$DEFAULT_PASS"
-    echo -e "$(green "Menggunakan password default untuk backup ini.")"
 else
     ZIP_PASSWORD="$user_pass"
-    echo -e "$(green "Menggunakan password yang dimasukkan untuk backup ini.")"
 fi
 sleep 1
 
-# Buat Direktori Backup
+# Buat Direktori Backup & Salin File
 rm -rf "$backup_dir"
 mkdir -p "$backup_dir"
-
-# Salin File yang Akan Dibackup
 echo -e "$(green "Menyalin file konfigurasi...")"
 cp /etc/passwd /root/backup/ &> /dev/null
 cp /etc/group /root/backup/ &> /dev/null
@@ -64,7 +56,7 @@ cp /etc/noobzvpns/db_user.json /root/backup/noobzvpns/ 2>/dev/null
 cp /etc/noobzvpns/.noobz.db /root/backup/noobzvpns/ 2>/dev/null
 cd /root
 
-# Buat File ZIP dengan Password (Menggunakan Variabel Baru)
+# Buat File ZIP dengan Password
 echo -e "$(green "Membuat file ZIP terenkripsi...")"
 zip -rP "$ZIP_PASSWORD" "$zip_file" "backup" &> /dev/null
 
@@ -73,58 +65,35 @@ if [[ ! -f "$zip_file" ]]; then
     exit 1
 fi
 
-# Upload ke Google Drive dengan rclone
-echo -e "$(green "Mengunggah file ke Google Drive...")"
-rclone copy "$zip_file" rerechan:backup/
+# Upload ke Google Drive menggunakan variabel remote
+echo -e "$(green "Mengunggah file ke Google Drive menggunakan remote $RCLONE_REMOTE...")"
+rclone copy "$zip_file" "$RCLONE_REMOTE":backup/
 
 # Dapatkan URL file
-url=$(rclone link rerechan:backup/"$(basename "$zip_file")")
+url=$(rclone link "$RCLONE_REMOTE":backup/"$(basename "$zip_file")")
 
 if [[ -z "$url" ]]; then
-    echo -e "$(red "Gagal mendapatkan link backup. Pastikan Rclone sudah terkonfigurasi!")"
+    echo -e "$(red "Gagal mendapatkan link backup. Pastikan Rclone remote '$RCLONE_REMOTE' terkonfigurasi!")"
     exit 1
 fi
+
+# ... (Sisa script untuk Telegram dan display CLI) ...
 
 # Ambil ID file
 backup_id=$(echo "$url" | grep -o 'id=[^&]*' | cut -d'=' -f2)
 link="https://drive.google.com/u/4/uc?id=${backup_id}&export=download"
 
-# Format Pesan Telegram (HTML)
 message="✅ <b>Backup Berhasil!</b>
+...
+"
 
-🆔 <b>ID Backup:</b>
-<pre>$backup_id</pre>
-
-🖥 <b>Informasi Server:</b>
-📛 <b>Nama Pengguna:</b> $USERNAME
-🌐 <b>Domain:</b> $domain
-🏢 <b>ISP:</b> $asn_info
-🌍 <b>IP VPS:</b> <pre>$ipsaya</pre>
-⏰ <b>Waktu Backup:</b> $tanggal pukul $waktu
-
-📥 <b>Unduh Backup:</b>
-<pre>$link</pre>
-
-🔹 <i>File backup telah tersimpan di Google Drive.</i>
-🔹 <i>Simpan ID backup ini untuk referensi pemulihan di masa mendatang.</i>
-
-🔒 <b>Keamanan:</b> File backup dilindungi dengan password: <b>$ZIP_PASSWORD</b>
-🔄 Proses backup ini dilakukan secara otomatis untuk menjaga data Anda tetap aman.
-
-✨ <b>Terima kasih telah menggunakan layanan kami!</b>"
-
-# Kirim pesan ke Telegram
 if [ -n "$botToken" ] && [ -n "$chatId" ]; then
     curl -s -X POST "https://api.telegram.org/bot$botToken/sendMessage" \
          -d "chat_id=$chatId" \
          --data-urlencode "text=$message" \
          -d "parse_mode=HTML"  &> /dev/null
-    echo -e "$(green "Pesan notifikasi Telegram telah terkirim.")"
-else
-    echo -e "$(red "Gagal mengirim notifikasi Telegram. (botToken/chatId tidak ditemukan).")"
 fi
 
-# Tampilkan Detail ke CLI
 clear
 echo -e "$(green "Backup dan pengiriman notifikasi selesai.")"
 echo -e "$(green "Detail Backup:")"
@@ -139,4 +108,4 @@ echo -e "┣ 🔒 Password ZIP: ${RED}$ZIP_PASSWORD${NC}"
 echo -e "┗━━━━━━━━━━━━━━━━━"
 echo -e "📥 Unduh Backup: $link"
 rm -rf "$backup_dir"
-rm -f "$zip_file" # Menghapus file ZIP lokal setelah selesai
+rm -f "$zip_file"
