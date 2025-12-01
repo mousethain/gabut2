@@ -46,7 +46,7 @@ sslh=$(check_service sslh)
 
 clear
 echo -e "─────────────────────────────────────────────────────"
-echo -e "[              Autoscript By Rerechan02             ]"
+echo -e "[              Autoscript By Mousevpn             ]"
 echo -e "─────────────────────────────────────────────────────"
 echo -e " OS: $ml"
 echo -e " IP: $ipsaya"
