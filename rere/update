@@ -6,7 +6,7 @@
 # --- KONFIGURASI REPO ---
 REPO_URL="https://raw.githubusercontent.com/mousethain/rere"
 MAIN_BRANCH="main"
-LATEST_VERSION_FILE="$MAIN_BRANCH/VERSION.txt"
+LATEST_VERSION_FILE="$MAIN_BRANCH/VERSION"
 LOCAL_VERSION_FILE="/etc/current_version"
 UPDATE_CORE_SCRIPT="update_core.sh"
 # ------------------------
