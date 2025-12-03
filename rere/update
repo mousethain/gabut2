@@ -71,14 +71,14 @@ main_update() {
             
             chmod +x /tmp/update_core.sh
             
-            # --- PERBAIKAN KRITIS UNTUK MENCEGAH ERROR YANG BARU SAJA ANDA LAPORKAN ---
-            # Meneruskan versi dan menjalankan skrip core
+            # --- BLOK KRITIS YANG DIPERBAIKI ---
+            # 1. Meneruskan versi dan menjalankan skrip core
             bash /tmp/update_core.sh "$LATEST_VER"
             CORE_EXIT_CODE=$? # AMBIL KODE KELUAR DARI update_core.sh
             
             rm -f /tmp/update_core.sh
             
-            # Hanya tulis versi baru jika skrip inti berhasil (Exit Code 0)
+            # 2. Hanya tulis versi baru jika skrip inti berhasil (Exit Code 0)
             if [ $CORE_EXIT_CODE -eq 0 ]; then
                 echo "$LATEST_VER" > "$LOCAL_VERSION_FILE"
                 echo -e "${GREEN}✓ Pembaruan Selesai! Versi sekarang: $LATEST_VER${NC}"
@@ -86,7 +86,7 @@ main_update() {
                 # Jika skrip inti gagal, jangan ganti versi lokal
                 echo -e "${RED}!! Pembaruan GAGAL (Kode Keluar: $CORE_EXIT_CODE). Versi tetap: $LOCAL_VER${NC}"
             fi
-            # -----------------------------------------------------------------------
+            # -----------------------------------
             ;;
         *)
             echo -e "${YELLOW}i Pembaruan dibatalkan.${NC}"
