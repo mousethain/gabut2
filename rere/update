@@ -1,12 +1,15 @@
 #!/bin/bash
 # ========================================================
-# Xray Core Update Script (Robust Version)
+# cript Update By : Mousevpn
 # ========================================================
 
-# --- KONFIGURASI ---
+# --- KONFIGURASI REPO ---
 REPO_URL="https://raw.githubusercontent.com/mousethain/rere"
-VERSION_TO_INSTALL="$1" 
-# -------------------
+MAIN_BRANCH="main"
+LATEST_VERSION_FILE="$MAIN_BRANCH/VERSION"
+LOCAL_VERSION_FILE="/etc/current_version"
+UPDATE_CORE_SCRIPT="update_core.sh"
+# ------------------------
 
 # Output Warna
 RED='\033[0;31m'
@@ -14,73 +17,81 @@ GREEN='\033[0;32m'
 YELLOW='\033[0;33m'
 NC='\033[0m'
 
-cleanup_old_files() {
-    echo -e "${YELLOW}>> Memeriksa dan membersihkan file script lama (jika ada)...${NC}"
-    # Tidak ada file khusus yang didefinisikan untuk dihapus saat ini.
+get_local_version() {
+    if [ -f "$LOCAL_VERSION_FILE" ]; then
+        cat "$LOCAL_VERSION_FILE" | tr -d '[:space:]' 
+    else
+        echo "v0.0" 
+    fi
 }
 
-main_core_update() {
-    if [ -z "$VERSION_TO_INSTALL" ]; then
-        echo -e "${RED}!! Error: Versi target update tidak ditemukan. Proses dibatalkan.${NC}"
-        # Pastikan kita keluar dengan status non-nol jika gagal
+get_latest_version() {
+    LATEST_VERSION=$(curl -sS --retry 5 --fail "$REPO_URL/$LATEST_VERSION_FILE")
+    if [ $? -eq 0 ]; then
+        echo "$LATEST_VERSION" | tr -d '[:space:]'
+    else
+        echo "" 
+    fi
+}
+
+main_update() {
+    LOCAL_VER=$(get_local_version)
+    LATEST_VER=$(get_latest_version)
+
+    echo -e "${YELLOW}>> Memeriksa Pembaruan... (Versi Terinstal: ${LOCAL_VER})${NC}"
+
+    if [ -z "$LATEST_VER" ]; then
+        echo -e "${RED}!! Gagal mengambil informasi versi terbaru dari GitHub. Cek koneksi.${NC}"
         return 1
     fi
-    
-    echo -e "${GREEN}==============================================${NC}"
-    echo -e "${GREEN}  Memulai Instalasi Core Versi ${VERSION_TO_INSTALL} ${NC}"
-    echo -e "${GREEN}==============================================${NC}"
 
-    # A. Pembersihan
-    cleanup_old_files
-    
-    # B. Download dan Penggantian Script Inti (Termasuk penghapusan file lama)
-    echo -e "${YELLOW}>> Mengunduh dan mengganti script utama...${NC}"
-
-    declare -a SCRIPTS=("menu" "add-vless" "add-vmess")
-    ALL_SUCCESS=true
-
-    for script in "${SCRIPTS[@]}"; do
-        SCRIPT_URL="$REPO_URL/$VERSION_TO_INSTALL/$script"
-        TARGET_PATH="/usr/local/bin/$script"
-        
-        echo -e "${YELLOW}  -> Mengunduh $script dari $VERSION_TO_INSTALL...${NC}"
-        
-        # 1. Hapus file lama sebelum ganti (sesuai permintaan)
-        rm -f "$TARGET_PATH" 
-        
-        # 2. Unduh dan cek status
-        if ! wget -T 10 -O "$TARGET_PATH" "$SCRIPT_URL"; then
-            echo -e "${RED}!! GAGAL mengunduh $script. URL: $SCRIPT_URL${NC}"
-            ALL_SUCCESS=false
-        else
-            chmod +x "$TARGET_PATH"
-            echo -e "${GREEN}  -> Berhasil mengganti $script.${NC}"
-        fi
-    done
-    
-    # C. Konfigurasi Baru: Onering SNI (Hanya membuat jika belum ada)
-    ONERING_CONFIG_FILE="/usr/local/etc/v2ray/onering_sni"
-    if [ ! -f "$ONERING_CONFIG_FILE" ]; then
-        echo -e "${YELLOW}>> Membuat file konfigurasi Onering SNI awal...${NC}"
-        echo "N/A (Set me up!)" > "$ONERING_CONFIG_FILE"
-        chmod 644 "$ONERING_CONFIG_FILE"
+    # Cek apakah versi lokal sudah sama atau lebih baru dari versi terbaru
+    if [ "$(printf "%s\n" "$LOCAL_VER" "$LATEST_VER" | sort -V | tail -n 1)" = "$LOCAL_VER" ]; then
+        echo -e "${YELLOW}i Versi lokal ($LOCAL_VER) sudah terbaru (Versi GitHub: $LATEST_VER).${NC}"
+        return 0
     fi
-    
-    # D. Restart Service
-    echo -e "${YELLOW}>> Me-restart layanan Xray...${NC}"
-    systemctl restart v2ray
-    
-    # E. Laporan Akhir
-    if $ALL_SUCCESS; then
-        echo -e "${GREEN}==============================================${NC}"
-        echo -e "${GREEN}  Pembaruan Core ${VERSION_TO_INSTALL} SUKSES PENUH!${NC}"
-        echo -e "${GREEN}  Silakan jalankan 'menu' dan set Domain Onering (Opsi 13).${NC}"
-        echo -e "${GREEN}==============================================${NC}"
-        return 0 # Status Sukses
-    else
-        echo -e "${RED}!! Peringatan: Beberapa file gagal diunduh. Pembaruan mungkin tidak lengkap.${NC}"
-        return 1 # Status Gagal
-    fi
+
+    echo -e "\n${GREEN}==============================================${NC}"
+    echo -e "${GREEN}  Pembaruan Tersedia!${NC}"
+    echo -e "${GREEN}  Versi Lama: ${YELLOW}${LOCAL_VER}${NC}"
+    echo -e "${GREEN}  Versi Baru: ${YELLOW}${LATEST_VER}${NC}"
+    echo -e "${GREEN}==============================================${NC}"
+
+    read -r -p "Apakah Anda yakin ingin memperbarui dari ${LOCAL_VER} ke versi ${LATEST_VER}? (y/N): " response
+    case "$response" in
+        [yY][eE][sS]|[yY])
+            echo -e "${YELLOW}>> Memulai update core dari branch ${LATEST_VER}...${NC}"
+            
+            UPDATE_SCRIPT_URL="$REPO_URL/$LATEST_VER/$UPDATE_CORE_SCRIPT"
+            
+            if ! wget -q "$UPDATE_SCRIPT_URL" -O /tmp/update_core.sh; then
+                echo -e "${RED}!! Gagal mengunduh skrip core update. Proses dibatalkan.${NC}"
+                return 1
+            fi
+            
+            chmod +x /tmp/update_core.sh
+            
+            # --- PERBAIKAN KRITIS UNTUK MENCEGAH ERROR YANG BARU SAJA ANDA LAPORKAN ---
+            # Meneruskan versi dan menjalankan skrip core
+            bash /tmp/update_core.sh "$LATEST_VER"
+            CORE_EXIT_CODE=$? # AMBIL KODE KELUAR DARI update_core.sh
+            
+            rm -f /tmp/update_core.sh
+            
+            # Hanya tulis versi baru jika skrip inti berhasil (Exit Code 0)
+            if [ $CORE_EXIT_CODE -eq 0 ]; then
+                echo "$LATEST_VER" > "$LOCAL_VERSION_FILE"
+                echo -e "${GREEN}✓ Pembaruan Selesai! Versi sekarang: $LATEST_VER${NC}"
+            else
+                # Jika skrip inti gagal, jangan ganti versi lokal
+                echo -e "${RED}!! Pembaruan GAGAL (Kode Keluar: $CORE_EXIT_CODE). Versi tetap: $LOCAL_VER${NC}"
+            fi
+            # -----------------------------------------------------------------------
+            ;;
+        *)
+            echo -e "${YELLOW}i Pembaruan dibatalkan.${NC}"
+            ;;
+    esac
 }
 
-main_core_update "$@"
+main_update
