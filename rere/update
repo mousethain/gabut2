@@ -44,14 +44,11 @@ main_update() {
         echo -e "${RED}!! Gagal mengambil informasi versi terbaru dari GitHub. Cek koneksi.${NC}"
         return 1
     fi
-    
-    if [ "$LOCAL_VER" = "$LATEST_VER" ]; then
-        echo -e "${GREEN}✓ Anda sudah menggunakan versi terbaru: ${LATEST_VER}${NC}"
-        return 0
-    fi
 
-    if [ "$(printf '%s\n' "$LOCAL_VER" "$LATEST_VER" | sort -V | tail -n 1)" = "$LOCAL_VER" ]; then
-        echo -e "${YELLOW}i Versi lokal ($LOCAL_VER) lebih baru dari versi GitHub ($LATEST_VER).${NC}"
+    # Cek apakah versi lokal sudah sama atau lebih baru dari versi terbaru
+    # Menggunakan sort -V untuk perbandingan versi yang benar (e.g., v1.1 > v1.10)
+    if [ "$(printf "%s\n" "$LOCAL_VER" "$LATEST_VER" | sort -V | tail -n 1)" = "$LOCAL_VER" ]; then
+        echo -e "${YELLOW}i Versi lokal ($LOCAL_VER) sudah terbaru (Versi GitHub: $LATEST_VER).${NC}"
         return 0
     fi
 
@@ -75,14 +72,17 @@ main_update() {
             
             chmod +x /tmp/update_core.sh
             
-            bash /tmp/update_core.sh
+            # --- PERBAIKAN KRITIS DI SINI ---
+            # Meneruskan $LATEST_VER sebagai argumen ke update_core.sh
+            bash /tmp/update_core.sh "$LATEST_VER" 
+            # --------------------------------
             
             rm -f /tmp/update_core.sh
             echo "$LATEST_VER" > "$LOCAL_VERSION_FILE"
-            echo -e "${GREEN}✓ Pembaruan Selesai! Versi sekarang: ${LATEST_VER}${NC}"
+            echo -e "${GREEN}✓ Pembaruan Selesai! Versi sekarang: $LATEST_VER${NC}"
             ;;
         *)
-            echo -e "${YELLOW}Pembaruan dibatalkan.${NC}"
+            echo -e "${YELLOW}i Pembaruan dibatalkan.${NC}"
             ;;
     esac
 }
